@@ -4,7 +4,7 @@ Donate link: http://buy.ads-ez.com/theme-tweaker
 Tags: theme, colors, admin, css, tweak
 Requires at least: 2.5
 Tested up to: 3.2
-Stable tag: 3.02
+Stable tag: 3.03
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
 
@@ -32,13 +32,13 @@ And more. New features and bug fixes will first appear in the Pro version before
 
 = New in this Release =
 
-Making a Pro and Lite version for public release.
+Updating a screenshot.
 
 == Upgrade Notice ==
 
-= 3.02 =
+= 3.03 =
 
-Making a Pro and Lite version for public release.
+Updating a screenshot.
 
 == Screenshots ==
 
@@ -64,6 +64,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V3.03: Updating a screenshot. [Nov 19, 2011]
 * V3.02: Making a Pro and Lite version for public release. [Nov 15, 2011]
 * V3.01: Documentation and admin-page display changes. Non-critical. [Aug 30, 2011]
 * V3.00: Fixed the Preview button. First commercial release. [July 28, 2011]
