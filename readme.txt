@@ -1,10 +1,10 @@
-=== Theme Tweaker Lite ===
+=== Theme Tweaker ===
 Contributors: manojtd
 Donate link: http://buy.ads-ez.com/theme-tweaker
 Tags: theme, colors, admin, css, tweak
 Requires at least: 2.5
-Tested up to: 3.2
-Stable tag: 3.03
+Tested up to: 3.3
+Stable tag: 3.04
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
 
@@ -51,8 +51,8 @@ Updating a screenshot.
 
 1. Upload the *Theme Tweaker* plugin (the whole `theme-tweaker-lite` folder) to the '/wp-content/plugins/' directory.
 2. Activate the plugin through the 'Plugins' page in WordPress.
-3. Go to the Appearance -> Theme Tweaker Lite and start tweaking your theme colors!
-4. Or, use the "Settings" link in the Plugins page next to *Theme Tweaker Lite* to reach the tweaking paradise.
+3. Go to the Appearance -> Theme Tweaker and start tweaking your theme colors!
+4. Or, use the "Settings" link in the Plugins page next to *Theme Tweaker* to reach the tweaking paradise.
 
 == Frequently Asked Questions ==
 
@@ -64,6 +64,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V3.04: Renaming the plugin to drop the word Lite. [May 11, 2012]
 * V3.03: Updating a screenshot. [Nov 19, 2011]
 * V3.02: Making a Pro and Lite version for public release. [Nov 15, 2011]
 * V3.01: Documentation and admin-page display changes. Non-critical. [Aug 30, 2011]

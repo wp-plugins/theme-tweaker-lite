@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Theme Tweaker Lite
+Plugin Name: Theme Tweaker
 Plugin URI: http://www.thulasidas.com/theme-tweaker
-Description: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker Lite</a>.
-Version: 3.03
+Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
+Version: 3.04
 Author: Manoj Thulasidas
 Author URI: http://www.thulasidas.com
 */
@@ -521,7 +521,7 @@ if (!class_exists("themeTweaker")) {
         PLUGINDIR . '/' .  basename(dirname(__FILE__)) . '/wz_tooltip.js"></script>' ; ?>
 
 <div class="wrap" style="width:800px">
-<h2>Theme Tweaker Lite <a href="http://validator.w3.org/" target="_blank"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Transitional" title="Theme Tweaker Admin Page is certified Valid XHTML 1.0 Transitional" height="31" width="88" class="alignright"/></a></h2>
+<h2>Theme Tweaker <a href="http://validator.w3.org/" target="_blank"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Transitional" title="Theme Tweaker Admin Page is certified Valid XHTML 1.0 Transitional" height="31" width="88" class="alignright"/></a></h2>
 
 <div id="status" class="updated"><?php
 if (isset($_POST['update_themeTweakerSettings'])) echo $_SESSION['statUpdate'] ;
@@ -560,7 +560,7 @@ Or choose to "Activate" the new scheme (for everybody) by checking that box.
 Once ready, click on the "Save Changes" button to save the changes. Note that you will see the changes (in preview or activate mode) only after saving.
 </li>
 <li>
-<b>Theme Tweaker Lite</b> will remember your saved color schemes for any number of themes.
+<b>Theme Tweaker</b> will remember your saved color schemes for any number of themes.
 </li>
 </ul>
 </div>
@@ -659,7 +659,7 @@ Save your color tweaks and options?<br /><br />
 <input type="submit" name="update_themeTweakerSettings" value="<?php _e('Save Changes', 'easy-adsenser') ?>" title="Save your options"  onmouseover="Tip('Save the colors as specified above',WIDTH, 240, TITLE, 'Save Settings')" onmouseout="UnTip()" onclick="setStatus('<?php echo $statUpdate ?>')" />
 <input type="submit" name="clean_db"  value="<?php _e('Clean Database', 'easy-adsenser') ?>" onmouseover="TagToTip('help4',WIDTH, 280, TITLE, 'DANGER!', BGCOLOR, '#ffcccc', FONTCOLOR, '#800000',BORDERCOLOR, '#c00000')" onmouseout="UnTip()" onclick="setStatus('<?php echo $statClean ?>')" />
 <span id="help4">
-<font color="red">The <b>Database Cleanup</b> button discards all your Theme Tweaker Lite settings that you have saved so far for <b>all</b> the themes, including the current one. Use it only if you know that you will not be using these themes. Please be careful with all database operations -- keep a backup.</font><br />
+<font color="red">The <b>Database Cleanup</b> button discards all your Theme Tweaker settings that you have saved so far for <b>all</b> the themes, including the current one. Use it only if you know that you will not be using these themes. Please be careful with all database operations -- keep a backup.</font><br />
 <b><?php _e('Discard all your changes and load defaults. (Are you quite sure?)', 'easy-adsenser') ?></b></span>
 <br /><br />
 <div style="background-color:#cff;padding:5px;border: solid 1px;margin:5px;padding-bottom:15px;">
@@ -678,7 +678,7 @@ Save your color tweaks and options?<br /><br />
 <tr><td>
 <ul style="padding-left:10px;list-style-type:circle; list-style-position:inside;" >
 <li>
-<b>Theme Tweaker Lite</b> uses the excellent Javascript color picker by <a href="http://jscolor.com" target="_blank" title="Javascript color picker"> JScolor</a>.
+<b>Theme Tweaker</b> uses the excellent Javascript color picker by <a href="http://jscolor.com" target="_blank" title="Javascript color picker"> JScolor</a>.
 </li>
 <li>
 It also uses the excellent Javascript/DHTML tooltips by <a href="http://www.walterzorn.com" target="_blank" title="Javascript, DTML Tooltips"> Walter Zorn</a>.
@@ -761,7 +761,7 @@ if (class_exists("themeTweaker")) {
       function themeTwk_ap() {
         global $thmTwk ;
         if (function_exists('add_theme_page')) {
-          $mName = 'Theme Tweaker Lite' ;
+          $mName = 'Theme Tweaker' ;
           add_theme_page($mName, $mName, 9, basename(__FILE__),
             array(&$thmTwk, 'printAdminPage'));
         }
