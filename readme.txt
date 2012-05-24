@@ -64,7 +64,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
-* V3.04: Renaming a function, consolidating image resources and trimming auxiliary files. [May 24, 2012]
+* V3.05: Renaming a function, consolidating image resources and trimming auxiliary files. [May 24, 2012]
 * V3.04: Renaming the plugin to drop the word Lite. [May 11, 2012]
 * V3.03: Updating a screenshot. [Nov 19, 2011]
 * V3.02: Making a Pro and Lite version for public release. [Nov 15, 2011]
