@@ -3,7 +3,7 @@
 Plugin Name: Theme Tweaker
 Plugin URI: http://www.thulasidas.com/theme-tweaker
 Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-Version: 3.04
+Version: 3.05
 Author: Manoj Thulasidas
 Author URI: http://www.thulasidas.com
 */
@@ -25,39 +25,41 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function stri_replace($find,$replace,$string)
-{
-  if(!is_array($find))
-    $find = array($find);
-
-  if(!is_array($replace))
+if (!function_exists('str_ireplace')) {
+  function str_ireplace($find,$replace,$string)
   {
     if(!is_array($find))
-      $replace = array($replace);
-    else
+      $find = array($find);
+
+    if(!is_array($replace))
     {
-      // this will duplicate the string into an array the size of $find
-      $c = count($find);
-      $rString = $replace;
-      unset($replace);
-      for ($i = 0; $i < $c; $i++)
+      if(!is_array($find))
+        $replace = array($replace);
+      else
       {
-        $replace[$i] = $rString;
+        // this will duplicate the string into an array the size of $find
+        $c = count($find);
+        $rString = $replace;
+        unset($replace);
+        for ($i = 0; $i < $c; $i++)
+        {
+          $replace[$i] = $rString;
+        }
       }
     }
-  }
-  foreach($find as $fKey => $fItem)
+    foreach($find as $fKey => $fItem)
     {
       $between = explode(strtolower($fItem),strtolower($string));
       $pos = 0;
       foreach($between as $bKey => $bItem)
-        {
-          $between[$bKey] = substr($string,$pos,strlen($bItem));
-          $pos += strlen($bItem) + strlen($fItem);
-        }
+      {
+        $between[$bKey] = substr($string,$pos,strlen($bItem));
+        $pos += strlen($bItem) + strlen($fItem);
+      }
       $string = implode($replace[$fKey],$between);
     }
-  return($string);
+    return($string);
+  }
 }
 
 if (!class_exists("themeTweaker")) {
@@ -437,7 +439,7 @@ if (!class_exists("themeTweaker")) {
     //Prints out the admin page
     function printAdminPage() {
 
-      @include(dirname (__FILE__).'/myPlugins.php');
+      @include_once(dirname (__FILE__).'/myPlugins.php');
       $plgName = 'theme-tweaker' ;
       $ezIsPro = false ;
 
@@ -496,9 +498,6 @@ if (!class_exists("themeTweaker")) {
 
         // generate the new style
         $func = 'str_ireplace' ;
-        if (!function_exists($func)) {
-          $func = 'stri_replace' ;
-        }
 
         $styletmp = $func($colors0, $tmpcols, $stylecontent) ;
         $stylestr = $func($tmpcols, $colors1, $styletmp) ;
