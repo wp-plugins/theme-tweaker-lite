@@ -45,7 +45,8 @@ function makeTextWithTooltipTag($plg, $text, $tip, $title='', $width='')
   return $return ;
 }
 function renderPlg($name, $plg) {
-  if ($plg['isBook']) return ;
+  $plugindir = get_option('siteurl') . '/' . PLUGINDIR . '/' .  basename(dirname(__FILE__)) ;
+  if ($plg['kind'] != '' && $plg['kind'] != 'plugin') return ;
   $value = '<em><strong>'.$plg['value'].'</strong></em>';
   $desc = $plg['desc'] ;
   $title = $plg['title'] ;
@@ -54,9 +55,9 @@ function renderPlg($name, $plg) {
   $text = $link . $desc ;
   $price = $plg['price'] ;
   $moreInfo = "&nbsp;&nbsp;<a href='http://www.thulasidas.com/plugins/$name' title='More info about $value at Unreal Blog'>More Info</a> " ;
-  $liteVersion = "&nbsp;&nbsp; <a href='http://buy.ads-ez.com/$name/$name.zip' title='Download the Lite version of $value'>Get Lite Version</a> " ;
-  $proVersion = "&nbsp;&nbsp; <a href='http://buy.ads-ez.com/$name' title='Buy the Pro version of $value for \$$price'>Get Pro Version</a><br />" ;
-  $why = "<a href='http://buy.ads-ez.com/$name' title='Pro version of the $name plugin'><img src='https://www.paypalobjects.com/en_GB/SG/i/btn/btn_buynowCC_LG.gif' border='0' alt='PayPal — The safer, easier way to pay online.' class='alignright' /></a>
+  $liteVersion = "&nbsp;&nbsp; <a href='http://buy.thulasidas.com/$name/$name.zip' title='Download the Lite version of $value'>Get Lite Version</a> " ;
+  $proVersion = "&nbsp;&nbsp; <a href='http://buy.thulasidas.com/$name' title='Buy the Pro version of $value for \$$price'>Get Pro Version</a><br />" ;
+  $why = "<a href='http://buy.thulasidas.com/$name' title='Buy the Pro version of the $name plugin'><img src='$plugindir/ezpaypal.png' border='0' alt='ezPayPal -- Instant PayPal Shop.' class='alignright' /></a>
 <br />".$plg['pro'] ;
   echo "<li>" . makeTextWithTooltip($text, $title, $value, 350) .
     "<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" .
@@ -66,7 +67,8 @@ function renderPlg($name, $plg) {
     "</li>\n" ;
 }
 function renderBook($name, $plg) {
-  if (!$plg['isBook']) return ;
+  $plugindir = get_option('siteurl') . '/' . PLUGINDIR . '/' .  basename(dirname(__FILE__)) ;
+  if ($plg['kind'] != 'book') return ;
   $value = '<em><strong>'.$plg['value'].'</strong></em>';
   $desc = $plg['desc'] ;
   $title = $plg['title'] ;
@@ -77,32 +79,22 @@ function renderBook($name, $plg) {
   $moreInfo = "&nbsp;&nbsp; <a href='$url' title='More info about $value at Unreal Blog'>More Info</a> " ;
   $amazon = $plg['amazon'] ;
   if (!empty($amazon)) $buyAmazon = "&nbsp;&nbsp; <a href='$amazon' title='Get $value from Amazon.com'>Get it at Amazon</a> " ;
-  $buyNow = "&nbsp;&nbsp; <a href='http://buy.ads-ez.com/$name' title='Buy and download $value for \$$price'>Buy and Download now!</a><br />" ;
-  $why = "<a href='http://buy.ads-ez.com/$name' title='$name'><img src='https://www.paypalobjects.com/en_GB/SG/i/btn/btn_buynowCC_LG.gif' border='0' alt='PayPal — The safer, easier way to pay online.' class='alignright' /></a>
+  $buyNow = "&nbsp;&nbsp; <a href='http://buy.thulasidas.com/$name' title='Buy and download $value for \$$price'>Buy and Download now!</a><br />" ;
+  $why = "<a href='http://buy.thulasidas.com/$name' title='$name'><img src='$plugindir/ezpaypal.png' border='0' alt='ezPayPal -- Instant PayPal Shop.' class='alignright' /></a>
 <br />".$title.$desc." $value costs only \$$price -- direct from the author." ;
   echo "<li>" . makeTextWithTooltip($text, $title, $value, 350) .
     "<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" .
     makeTextWithTooltip($moreInfo, "Read all about $value at its own site.<br />", "$value", 300) .
-     makeTextWithTooltip($buyAmazon, $title, "Buy $value from Amazon", 350) .
+    makeTextWithTooltip($buyAmazon, $title, "Buy $value from Amazon", 350) .
     makeTextWithTooltipTag($name, $buyNow, $why, "Buy $value!", 300) .
     "</li>\n" ;
 }
-
 ?>
-<?php
-?>
-<span id="rate">
-<iframe src="http://wordpress.org/extend/plugins/<?php echo $plgName ; ?>-lite" width="1000px" height="1000px">
-</iframe>
-</span>
 
 <table class="form-table" >
 <tr>
 <td>
 <ul style="padding-left:10px;list-style-type:circle; list-style-position:inside;" >
-  <li><a href="#" onclick="TagToTip('rate', TITLE, 'WordPress: <?php echo $myPlugins[$plgName] ;?> Lite', STICKY, 1, CLOSEBTN, true, FIX, [25, 25])"><font color="red">If you like this plugin, please give it a 5* rating.</font></a> People tend to vote or comment only when something doesn't work, and it skews the overall rating. Please do your bit to unskew it!</li>
-<li>
-<?php _e('Please report any problems. And share your thoughts and comments.', 'easy-adsenser') ; ?>&nbsp;<a href="http://wordpress.org/tags/<?php echo $plgName . "-lite" ; ?>" title="<?php _e('Post it in the WordPress forum', 'easy-adsenser') ; ?>" target="_blank"><?php _e("[WordPress Forum]", 'easy-adsenser') ?> </a>
 <li>
   If you need support, please read more information about <a href="http://www.Thulasidas.com/plugins/<?php echo $plgName ; ?>-more#FAQ" target="_blank" title="<?php _e('Go to the plugin description page', 'easy-adsenser') ; ?>"><?php echo $myPlugins[$plgName]['value'] ; ?></a> first -- in particular, the FAQ section.
 </li>
@@ -120,8 +112,9 @@ function renderBook($name, $plg) {
 
 </ul>
 </li>
+
 <li>
-<?php _e('My books -- on Physics, Philosophy, making Money etc:', 'easy-adsenser') ; ?>
+<?php _e('My Books -- on Physics, Philosophy, making Money etc:', 'easy-adsenser') ; ?>
 
 <ul style="margin-left:0px; padding-left:30px;list-style-type:square; list-style-position:inside;" >
 
@@ -131,7 +124,9 @@ function renderBook($name, $plg) {
 
 </ul>
 </li>
+
 </ul>
+
 </td>
 </tr>
 

@@ -178,5 +178,11 @@ function buttonwhich(message) {
 </div>
 ENDINVITE;
 }
+ if (!function_exists('renderRating')) {
+   function renderRating() {
+     $plg = basename(dirname(__FILE__)) ;
+     echo "<div class='updated'><strong><p>Thanks for using this plugin! If it works and your are satisfied, why not <a href='http://wordpress.org/extend/plugins/$plg/'>rate it</a> and <a href='http://wordpress.org/extend/plugins/$plg/'>recommend it</a> to others? :-) </p></strong></div>" ;
+   }
+ }
 }
 ?>
