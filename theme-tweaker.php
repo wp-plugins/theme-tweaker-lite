@@ -3,7 +3,7 @@
 Plugin Name: Theme Tweaker
 Plugin URI: http://www.thulasidas.com/theme-tweaker
 Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-Version: 3.06
+Version: 3.07
 Author: Manoj Thulasidas
 Author URI: http://www.thulasidas.com
 */
@@ -102,6 +102,8 @@ if (!class_exists("themeTweaker")) {
               $mPreKey => true,
               $mActKey => false,
               $mFooter => true,
+              'kill_invites' => false,
+              'kill_rating' => false,
               $mCSSKey => '',
               $mTrmKey => '') ;
       $TTOptions = get_option($mOptions);
@@ -492,6 +494,10 @@ if (!class_exists("themeTweaker")) {
         else {
           $TTOptions[$mFooter] = false ;
         }
+        if (isset($_POST['killInvites']))
+          $TTOptions['kill_invites'] = $_POST['killInvites'];
+        if (isset($_POST['killRating']))
+          $TTOptions['kill_rating'] = $_POST['killRating'];
 
         // need to replace in two steps, just incase colors0 and colors1 have overlaps
         $tmpcols = $this->mapFunc($colors0, 'tmpColor') ;
@@ -526,9 +532,6 @@ if (!class_exists("themeTweaker")) {
 if (isset($_POST['update_themeTweakerSettings'])) echo $_SESSION['statUpdate'] ;
 if (isset($_POST['clean_db'])) echo $_SESSION['statClean'] ; ?>
 </div>
-<?php
-    renderInvite($myPlugins[$plgName],$plgName) ;
-?>
 <table class="form-table">
 <tr><th scope="row"><h3>Instructions</h3></th></tr>
 <tr valign="top">
@@ -582,6 +585,11 @@ Or, you can click on the "Generate Child Theme" button to download a child theme
 </table>
 
 <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
+<?php
+  $plgDir = dirname(__FILE__) ;
+  if (!$TTOptions['kill_rating']) renderRating($myPlugins[$plgName], $plgDir) ;
+  if (!$TTOptions['kill_invites']) renderInvite($myPlugins[$plgName],$plgName) ;
+?>
 
 <table class="form-table">
 <tr><th scope="row"><h3>Tweak the Colors Found in "<?php echo $mThemeName ; ?>"</h3></th></tr>

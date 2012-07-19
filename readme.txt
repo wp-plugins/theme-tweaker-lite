@@ -4,7 +4,7 @@ Donate link: http://affiliates.thulasidas.com
 Tags: theme, colors, admin, css, tweak
 Requires at least: 2.5
 Tested up to: 3.4
-Stable tag: 3.06
+Stable tag: 3.07
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
 
@@ -32,13 +32,13 @@ And more. New features and bug fixes will first appear in the Pro version before
 
 = New in this Release =
 
-Testing compatibility with WP 3.4.
+Minor changes to the admin page.
 
 == Upgrade Notice ==
 
-= 3.05 =
+= 3.07 =
 
-Testing compatibility with WP 3.4.
+Minor changes to the admin page.
 
 == Screenshots ==
 
@@ -64,6 +64,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V3.07: Minor changes to the admin page. [July 18, 2012]
 * V3.06: Testing compatibility with WP 3.4. [July 11, 2012]
 * V3.05: Renaming a function, consolidating image resources and trimming auxiliary files. [May 24, 2012]
 * V3.04: Renaming the plugin to drop the word Lite. [May 11, 2012]
