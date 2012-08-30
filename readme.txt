@@ -1,10 +1,10 @@
 === Theme Tweaker ===
 Contributors: manojtd
 Donate link: http://affiliates.thulasidas.com
-Tags: theme, colors, admin, css, tweak
+Tags: theme, theme colors, theme styles, theme customization, extra css, theme tweaking
 Requires at least: 2.5
 Tested up to: 3.4
-Stable tag: 3.07
+Stable tag: 3.08
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
 
@@ -24,7 +24,7 @@ This release is the freely distributed, Lite version of *Theme Twekaer*. It is f
 
 1. Ability to generate and download `style.css` files with your modified colors.
 2. Ability to create a child theme so that your changes can be applied even when the underlying theme is updated.
-3. More color schemes.
+3. Scanning for *all* the style files in your theme directory to find all possible color definitions.
 
 And more. New features and bug fixes will first appear in the Pro version before being ported to this freely distributed Lite edition.
 
@@ -32,13 +32,13 @@ And more. New features and bug fixes will first appear in the Pro version before
 
 = New in this Release =
 
-Minor changes to the admin page.
+Taking care of some debug notices from WordPress debug mode.
 
 == Upgrade Notice ==
 
-= 3.07 =
+= 3.08 =
 
-Minor changes to the admin page.
+Taking care of some debug notices from WordPress debug mode.
 
 == Screenshots ==
 
@@ -64,6 +64,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V3.08: Taking care of some debug notices from WordPress debug mode. [Aug 30, 2012]
 * V3.07: Minor changes to the admin page. [July 18, 2012]
 * V3.06: Testing compatibility with WP 3.4. [July 11, 2012]
 * V3.05: Renaming a function, consolidating image resources and trimming auxiliary files. [May 24, 2012]

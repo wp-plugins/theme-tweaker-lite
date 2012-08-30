@@ -214,6 +214,7 @@ if (!function_exists('renderRating')) {
      else
        $msg = "You will find it feature-rich and robust." ;
      $plgKey = basename($plgDir) ;
+     $display = '' ;
      if (!$killable) $display = "style='display:none'" ;
 echo <<<ENDRATING
 <div class='updated' id='rating'>
