@@ -3,7 +3,7 @@
 Plugin Name: Theme Tweaker
 Plugin URI: http://www.thulasidas.com/theme-tweaker
 Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-Version: 3.10
+Version: 3.11
 Author: Manoj Thulasidas
 Author URI: http://www.thulasidas.com
 */
@@ -770,14 +770,14 @@ if (class_exists("themeTweaker")) {
         if (function_exists('add_theme_page')) {
           $mName = 'Theme Tweaker' ;
           add_theme_page($mName, $mName, 'activate_plugins', basename(__FILE__),
-            array(&$thmTwk, 'printAdminPage'));
+            array($thmTwk, 'printAdminPage'));
         }
       }
     }
 
     add_action('admin_menu', 'themeTwk_ap');
     add_action('activate_' . basename(dirname(__FILE__)) . '/' . basename(__FILE__),
-               array(&$thmTwk, 'init'));
+               array($thmTwk, 'init'));
     add_filter('plugin_action_links', array($thmTwk, 'plugin_action'), -10, 2);
     add_action('wp_head', array($thmTwk, 'head_action'), 99);
     add_action('wp_footer', array($thmTwk, 'footer_action'));
