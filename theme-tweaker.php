@@ -3,7 +3,7 @@
 Plugin Name: Theme Tweaker
 Plugin URI: http://www.thulasidas.com/theme-tweaker
 Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-Version: 3.12
+Version: 3.13
 Author: Manoj Thulasidas
 Author URI: http://www.thulasidas.com
 */
@@ -62,11 +62,11 @@ if (!function_exists('str_ireplace')) {
   }
 }
 
-if (!class_exists("themeTweaker")) {
-  class themeTweaker {
+if (!class_exists("ThemeTweaker")) {
+  class ThemeTweaker {
     var $isPro, $proStr ;
     //constructor
-    function themeTweaker() {
+    function ThemeTweaker() {
       if (isset($_POST['saveCSS']) || isset($_POST['saveChild'])) {
         $file = 'style.css' ;
         if (isset($_POST['saveCSS'])) $str = $_SESSION['strCSS'] ;
@@ -80,6 +80,9 @@ if (!class_exists("themeTweaker")) {
         ob_end_flush() ;
         exit(0) ;
       }
+    }
+    function session_start(){
+      if (!session_id()) @session_start() ;
     }
     function init() {
       $this->getAdminOptions();
@@ -757,10 +760,10 @@ It also uses the excellent Javascript/DHTML tooltips by <a href="http://www.walt
       }
     }
   }
-} //End Class themeTweaker
+} //End Class ThemeTweaker
 
-if (class_exists("themeTweaker")) {
-  $thmTwk = new themeTweaker();
+if (class_exists("ThemeTweaker")) {
+  $thmTwk = new ThemeTweaker();
   if (isset($thmTwk)) {
     //Initialize the admin panel
     if (!function_exists("themeTwk_ap")) {
@@ -780,7 +783,7 @@ if (class_exists("themeTweaker")) {
     add_filter('plugin_action_links', array($thmTwk, 'plugin_action'), -10, 2);
     add_action('wp_head', array($thmTwk, 'head_action'), 99);
     add_action('wp_footer', array($thmTwk, 'footer_action'));
-    if (!session_id()) add_action('init', 'session_start') ;
+    add_action('init', array($thmTwk, 'session_start')) ;
   }
 }
 
