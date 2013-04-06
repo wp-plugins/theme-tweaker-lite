@@ -3,8 +3,8 @@ Contributors: manojtd
 Donate link: http://buy.thulasidas.com/theme-tweaker
 Tags: theme, theme colors, theme styles, theme customization, extra css, theme tweaking
 Requires at least: 2.5
-Tested up to: 3.4
-Stable tag: 3.13
+Tested up to: 3.5
+Stable tag: 3.14
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
 
@@ -32,13 +32,13 @@ And more. New features and bug fixes will first appear in the Pro version before
 
 = New in this Release =
 
-Proper session initialization.
+Documentation changes only.
 
 == Upgrade Notice ==
 
-= 3.13 =
+= 3.14 =
 
-Proper session initialization.
+Documentation changes only.
 
 == Screenshots ==
 
@@ -64,6 +64,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V3.14: Documentation changes only. [Apr 6, 2013]
 * V3.13: Proper session initialization. [Mar 30, 2013]
 * V3.12: Proper use of SESSION variables. [Feb 18, 2013]
 * V3.11: Bug fixes (Fatal error: Call-time pass-by-reference has been removed). [Jan 28, 2013]

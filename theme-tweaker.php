@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Theme Tweaker
-Plugin URI: http://www.thulasidas.com/theme-tweaker
+Plugin URI: http://www.thulasidas.com/plugins/theme-tweaker
 Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-Version: 3.13
+Version: 3.14
 Author: Manoj Thulasidas
 Author URI: http://www.thulasidas.com
 */
