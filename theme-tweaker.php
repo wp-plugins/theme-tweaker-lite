@@ -3,7 +3,7 @@
 Plugin Name: Theme Tweaker
 Plugin URI: http://www.thulasidas.com/plugins/theme-tweaker
 Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-Version: 3.14
+Version: 3.20
 Author: Manoj Thulasidas
 Author URI: http://www.thulasidas.com
 */
@@ -26,40 +26,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 if (!function_exists('str_ireplace')) {
-  function str_ireplace($find,$replace,$string)
-  {
-    if(!is_array($find))
+
+  function str_ireplace($find, $replace, $string) {
+    if (!is_array($find))
       $find = array($find);
 
-    if(!is_array($replace))
-    {
-      if(!is_array($find))
+    if (!is_array($replace)) {
+      if (!is_array($find))
         $replace = array($replace);
-      else
-      {
+      else {
         // this will duplicate the string into an array the size of $find
         $c = count($find);
         $rString = $replace;
         unset($replace);
-        for ($i = 0; $i < $c; $i++)
-        {
+        for ($i = 0; $i < $c; $i++) {
           $replace[$i] = $rString;
         }
       }
     }
-    foreach($find as $fKey => $fItem)
-    {
-      $between = explode(strtolower($fItem),strtolower($string));
+    foreach ($find as $fKey => $fItem) {
+      $between = explode(strtolower($fItem), strtolower($string));
       $pos = 0;
-      foreach($between as $bKey => $bItem)
-      {
-        $between[$bKey] = substr($string,$pos,strlen($bItem));
+      foreach ($between as $bKey => $bItem) {
+        $between[$bKey] = substr($string, $pos, strlen($bItem));
         $pos += strlen($bItem) + strlen($fItem);
       }
-      $string = implode($replace[$fKey],$between);
+      $string = implode($replace[$fKey], $between);
     }
     return($string);
   }
+
 }
 
 if (!class_exists("ThemeTweaker")) {
@@ -266,8 +262,8 @@ if (!class_exists("ThemeTweaker")) {
 
     // make a color table
     function makeTable($colors0, $colors1) {
-      $table = '<table align="center" border="0" cellpadding="0">' . "\n" ;
-      $table .= '<tr align="center" valign="middle"><td><b>Old Colors</b></td>' . "\n" .
+      $table = '<table style="border-spacing=0;border-collapse=collapse;margin-right:auto;margin-left:auto;vertical-algin:middle;">' . "\n" ;
+      $table .= '<tr><td><b>Old Colors</b></td>' . "\n" .
         '<td><b>Tweaked Colors</b><br />Click to Modify</td></tr>' ;
       foreach ($colors0 as $key => $val) {
         $newcol = $colors1[$key] ;
@@ -281,8 +277,8 @@ if (!class_exists("ThemeTweaker")) {
           $newcol . '" name="in_' . $name . '" id="in_' . $name .
           '" title="Tweaked Color [Click to pick, or Type in RRGGBB]" />' ;
 
-        $table .=  '<tr><td bgcolor="' . $val . '">' . $nopicker . '</td>' . "\n" .
-          '<td bgcolor="' . $newcol . '" id="td_' . $name . '">' .
+        $table .=  '<tr><td style="background-color:' . $val . '">' . $nopicker . '</td>' . "\n" .
+          '<td style="background-color:' . $newcol . '" id="td_' . $name . '">' .
           $picker . '</td></tr>' . "\n" ;
       }
       $table .= '</table>' ;
@@ -373,10 +369,10 @@ if (!class_exists("ThemeTweaker")) {
     function makeButtons($colors0, $colors1) {
       $mThemeName = get_option('stylesheet') ;
       $table = '' ;
-      $table .= '<table align="center">' . "\n" . '<tr><td align="center">' ;
+      $table .= '<table style="margin-right:auto;margin-left:auto;text-align:center;">' . "\n" . '<tr><td>' ;
 
       // Reset
-      $table .= '</td></tr>' . "\n" . '<tr><td align="center">' ;
+      $table .= '</td></tr>' . "\n" . '<tr><td>' ;
       $table .= '<input type="button" style="width:100%;" name="reset" value="Reset Colors" ' ;
       $table .= 'title="Reset the colors to the original colors of ' ;
       $table .= $mThemeName . '" ' ;
@@ -385,7 +381,7 @@ if (!class_exists("ThemeTweaker")) {
       $table .= '" />' ;
 
       // invert colors
-      $table .= '</td></tr>' . "\n" . '<tr><td align="center">' ;
+      $table .= '</td></tr>' . "\n" . '<tr><td>' ;
       $newcol = $this->mapFunc($colors0, 'negColor') ;
       $table .= '<input type="button" style="width:100%;" name="negative" value="Invert Colors" ' ;
       $table .= 'title="Color negatives of the original colors in ' ;
@@ -396,7 +392,7 @@ if (!class_exists("ThemeTweaker")) {
       $table .= '" />' ;
 
       // grey scale
-      $table .= '</td></tr>' . "\n" . '<tr><td align="center">' ;
+      $table .= '</td></tr>' . "\n" . '<tr><td>' ;
       $newcol = $this->mapFunc($colors0, 'greyColor') ;
       $table .= '<input type="button" style="width:100%;" name="grey" value="Black &amp; White" ' ;
       $table .= 'title="Desaturate to grey scales of the original colors of ' ;
@@ -406,7 +402,7 @@ if (!class_exists("ThemeTweaker")) {
       $table .= '" />' ;
 
       // grey scale negative
-      $table .= '</td></tr>' . "\n" . '<tr><td align="center">' ;
+      $table .= '</td></tr>' . "\n" . '<tr><td>' ;
       $newcol = $this->mapFunc($colors0, 'negColor') ;
       $newcol = $this->mapFunc($newcol, 'greyColor') ;
       $table .= '<input type="button" style="width:100%;" name="greyneg" value="B&amp;W Negative" ' ;
@@ -417,7 +413,7 @@ if (!class_exists("ThemeTweaker")) {
       $table .= '" />' ;
 
       // sepia
-      $table .= '</td></tr>' . "\n" . '<tr><td align="center">' ;
+      $table .= '</td></tr>' . "\n" . '<tr><td>' ;
       $newcol = $this->mapFunc($colors0, 'sepia') ;
       $table .= '<input type="button" style="width:100%;" name="sepia" value="Sepia Effect" ' ;
       $table .= 'title="Generate sepia colours out of the original colors of ' ;
@@ -427,7 +423,7 @@ if (!class_exists("ThemeTweaker")) {
       $table .= '" />' ;
 
       // random colors
-      $table .= '</td></tr>' . "\n" . '<tr><td align="center">' ;
+      $table .= '</td></tr>' . "\n" . '<tr><td>' ;
       $table .= '<input type="button" style="width:100%;" name="random" value="Random Colors" ' ;
       $table .= 'title="Generate random colors while keeping the styles of ' ;
       $table .= $mThemeName. '" ' ;
@@ -535,9 +531,11 @@ if (isset($_POST['update_themeTweakerSettings'])) echo $_SESSION['statUpdate'] ;
 if (isset($_POST['clean_db'])) echo $_SESSION['statClean'] ; ?>
 </div>
 <table class="form-table">
-<tr><th scope="row"><h3>Instructions</h3></th></tr>
-<tr valign="top">
-<td width="400">
+<tr><th scope="row"><b>Instructions</b></th></tr>
+</table>
+<table class="form-table">
+<tr style="vertical-align:top">
+<td style="width:400">
 <ul style="padding-left:10px;list-style-type:circle; list-style-position:inside;" >
 <li>
 <a href="#" onmouseover="TagToTip('help0', WIDTH, 400, TITLE, 'How to Tweak Your Theme',STICKY, 1, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, 0, 5])" onmouseout="UnTip()"> Usage: How to tweak your theme colors.</a>
@@ -594,18 +592,18 @@ Or, you can click on the "Generate Child Theme" button to download a child theme
 ?>
 
 <table class="form-table">
-<tr><th scope="row"><h3>Tweak the Colors Found in "<?php echo $mThemeName ; ?>"</h3></th></tr>
+<tr><th scope="row"><b>Tweak the Colors Found in "<?php echo $mThemeName ; ?>"</b></th></tr>
 <tr><td></td></tr>
 </table>
 <table>
-<tr valign="top">
+<tr style="vertical-align:top">
 <td>
 <table>
-<tr align="center" valign="middle">
-<td width="350">
+<tr style="vertical-align:middle;text-align:center;">
+<td style="width:350">
 <?php echo $this->makeTable($colors0, $colors1) ?>
 </td>
-<td width="350">
+<td style="width:350">
 <?php echo $this->makeButtons($colors0, $colors1) ?>
 </td>
 </tr>
@@ -615,7 +613,7 @@ Or, you can click on the "Generate Child Theme" button to download a child theme
 </table>
 
 <table class="form-table" >
-<tr><th scope="row"><h3>Options for the Tweaked "<?php echo $mThemeName ; ?>"</h3></th></tr>
+<tr><th scope="row"><b>Options for the Tweaked "<?php echo $mThemeName ; ?>"</b></th></tr>
 <tr><td></td></tr>
 </table>
 <table class="form-table" >
@@ -668,7 +666,7 @@ Save your color tweaks and options?<br /><br />
 <input type="submit" name="update_themeTweakerSettings" value="<?php _e('Save Changes', 'easy-adsenser') ?>" title="Save your options"  onmouseover="Tip('Save the colors as specified above',WIDTH, 240, TITLE, 'Save Settings')" onmouseout="UnTip()" onclick="setStatus('<?php echo $statUpdate ?>')" />
 <input type="submit" name="clean_db"  value="<?php _e('Clean Database', 'easy-adsenser') ?>" onmouseover="TagToTip('help4',WIDTH, 280, TITLE, 'DANGER!', BGCOLOR, '#ffcccc', FONTCOLOR, '#800000',BORDERCOLOR, '#c00000')" onmouseout="UnTip()" onclick="setStatus('<?php echo $statClean ?>')" />
 <span id="help4">
-<font color="red">The <b>Database Cleanup</b> button discards all your Theme Tweaker settings that you have saved so far for <b>all</b> the themes, including the current one. Use it only if you know that you will not be using these themes. Please be careful with all database operations -- keep a backup.</font><br />
+<span style="color:red">The <b>Database Cleanup</b> button discards all your Theme Tweaker settings that you have saved so far for <b>all</b> the themes, including the current one. Use it only if you know that you will not be using these themes. Please be careful with all database operations -- keep a backup.</span><br />
 <b><?php _e('Discard all your changes and load defaults. (Are you quite sure?)', 'easy-adsenser') ?></b></span>
 <br /><br />
 <div style="background-color:#cff;padding:5px;border: solid 1px;margin:5px;padding-bottom:15px;">
@@ -683,7 +681,7 @@ Save your color tweaks and options?<br /><br />
 <?php @include (dirname (__FILE__).'/tail-text.php'); ?>
 
 <table class="form-table" >
-<tr><th scope="row"><h3>Credits</h3></th></tr>
+<tr><th scope="row"><b>Credits</b></th></tr>
 <tr><td>
 <ul style="padding-left:10px;list-style-type:circle; list-style-position:inside;" >
 <li>
@@ -723,12 +721,13 @@ It also uses the excellent Javascript/DHTML tooltips by <a href="http://www.walt
       $TTOptions = $this->getAdminOptions();
       $footer = $TTOptions[$mFooter] ;
       if ($footer) return ;
-      $unreal = '<div align="center"><font size="-3">' .
-        '<a href="http://www.thulasidas.com/plugins/theme-tweaker/" ' .
-        'target="_blank" title="The simplest way to tweak your theme colors!"> ' .
-        'Theme Tweaker</a> by <a href="http://www.Thulasidas.com/" ' .
-        'target="_blank" title="Unreal Blog proudly brings you Theme Tweaker">' .
-        'Unreal</a></font></div>';
+      $unreal = '<div style="margin-right:auto;margin-left:auto;text-align:center;">' .
+              '<font size="-3">' .
+              '<a href="http://www.thulasidas.com/plugins/theme-tweaker/" ' .
+              'target="_blank" title="The simplest way to tweak your theme colors!"> ' .
+              'Theme Tweaker</a> by <a href="http://www.Thulasidas.com/" ' .
+              'target="_blank" title="Unreal Blog proudly brings you Theme Tweaker">' .
+              'Unreal</a></font></div>';
       echo $unreal ;
     }
 
