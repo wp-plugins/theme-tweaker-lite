@@ -4,7 +4,7 @@ Donate link: http://buy.thulasidas.com/theme-tweaker
 Tags: theme, theme colors, theme styles, theme customization, extra css, theme tweaking
 Requires at least: 2.5
 Tested up to: 3.5
-Stable tag: 3.30
+Stable tag: 3.31
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
 
@@ -17,6 +17,8 @@ Furthermore, *Theme Tweaker* allows you to preview or activate your changes. Fin
 *Theme Tweaker* will now generate a fully functional child theme for you! Using child themes, you leave your original (parent) theme untouched, so that it can be updated independently without losing your tweaks.
 
 Cannot complete the tweaking in one sitting? No problem, *Theme Tweaker* lets you save your work and pick it up from here you leave off. Moreover, *Theme Tweaker* will remember your saved color schemes for any number of themes.
+
+*Theme Tweaker* is now available in your own language using machine translation curtsey of Google and Microsoft.
 
 = Pro Version =
 
@@ -32,13 +34,13 @@ And more. New features and bug fixes will first appear in the Pro version before
 
 = New in this Release =
 
-Introducing internationalization using Google/Microsoft Translate Widgets.
+Fixing internationalization using Google/Microsoft Translate Widgets.
 
 == Upgrade Notice ==
 
-= 3.30 =
+= 3.31 =
 
-Introducing internationalization using Google/Microsoft Translate Widgets.
+Fixing internationalization using Google/Microsoft Translate Widgets.
 
 == Screenshots ==
 
@@ -64,6 +66,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V3.31: Fixing internationalization using Google/Microsoft Translate Widgets. [May 17, 2013]
 * V3.30: Introducing internationalization using Google/Microsoft Translate Widgets. [May 17, 2013]
 * V3.20: Correcting W3C markup validation errors on the admin page. [Apr 27, 2013]
 * V3.14: Documentation changes only. [Apr 6, 2013]
