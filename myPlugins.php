@@ -39,7 +39,6 @@ $myPlugins['google-adsense'] =
     'price' => '5.95',
     'share' => true,
     'long' => false,
-    'hide' => true,
     'blurb' => '<em><strong>Google AdSense</strong></em> is a single-provider version of <em><strong>Easy Ads</strong></em> specialized for Google AdSense serving. If you are planning to use more than two providers, it may be easier and more economical to use <em><strong>Easy Ads</strong></em>. <em><strong>Google AdSense</strong></em> ',
     'desc' => 'provides you with a fully streamlined interface to manage Google AdSense on your blog.',
     'title' => '<a href="http://buy.thulasidas.com/plugins/google-adsense/" title="A new plugin to handle Google"><em><strong>Google AdSense</strong></em></a> gives you a specialized and intuitive interface to manage AdSense ads on your blog, with size selectors, widget options, color-picker to customize your colors, etc. It is a new generation plugin with a fancy, tabbed interface.',
@@ -145,6 +144,19 @@ $myPlugins['unreal-universe'] =
     'blurb' => '<em><strong>The Unreal Universe</strong></em> is a remarkable book on physics and philosophy, science and religion. This compelling read ',
     'desc' => 'will change the way you look at reality and understand the universe around you. Ever wonder why nothing can faster than light? And the Earth was void until God said "Let there be light"? Here are some of the answers.',
     'title' => '<em><strong>The Unreal Universe</strong></em> is a remarkable book on physics, philosophy and surprising interconnections among seemingly disconnected silos of human knowledge.',
+    'pro' => '',
+    'kind' =>'book') ;
+
+$myPlugins['pqd'] =
+  array('value' => 'Principles of Quantitative Development - Companion eBook',
+    'url' => 'http://pqd.thulasidas.com',
+    'amazon' => 'http://www.amazon.com/exec/obidos/ASIN/0470745703/unrblo-20',
+    'price' => '5.49',
+    'share' => false,
+    'long' => true,
+    'blurb' => 'This eBook companion to <em><strong>Principles of Quantitative Development</strong></em> is a lucid and succinct exposé on the trade life cycle and the business groups involved in managing it, bringing together the big picture of how a trade flows through the systems, and the role of a quantitative professional in the organization. This compelling book ',
+    'desc' => 'looks at the need and demand for in-house trading platforms, addressing the current trends in the industry. It then looks at the trade life cycle and its participants, from beginning to end, and then the functions within the front, middle and back office, giving the reader a full understanding and appreciation of the perspectives and needs of each function.',
+    'title' => '<em><strong>Principles of Quantitative Development</strong></em> has been enthusiastically endorsed by the leading professionals in the quantitative finance space, including <strong>Paul Wilmott</strong>.',
     'pro' => '',
     'kind' =>'book') ;
 

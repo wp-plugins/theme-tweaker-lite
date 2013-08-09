@@ -3,7 +3,7 @@
 Plugin Name: Theme Tweaker
 Plugin URI: http://www.thulasidas.com/plugins/theme-tweaker
 Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-Version: 3.31
+Version: 3.40
 Author: Manoj Thulasidas
 Author URI: http://www.thulasidas.com
 */
@@ -544,7 +544,7 @@ if (isset($_POST['clean_db'])) echo $_SESSION['statClean'] ; ?>
 <a href="#" onmouseover="TagToTip('help1', WIDTH, 400, TITLE, 'How to Save Stylefiles',STICKY, 1, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, 0, 5])" onmouseout="UnTip()"> Generating theme files and child themes.</a>
 </li>
 </ul>
-<div id="help0">
+<div id="help0" style="display:none;">
 <ul style="padding-left:10px;list-style-type:circle; list-style-position:inside;" >
 <li>
 The color scheme of your current theme "<?php echo $mThemeName ; ?>" is shown in the table below as the first column under "Old Colors".
@@ -566,7 +566,7 @@ Once ready, click on the "Save Changes" button to save the changes. Note that yo
 </li>
 </ul>
 </div>
-<div id="help1">
+<div id="help1" style="display:none;">
 <ul style="padding-left:10px;list-style-type:circle; list-style-position:inside;" >
 <li>You can download the tweaked theme style sheet by clicking on the "Download Stylesheet" button. It saves the changes and then downloads a style.css file that you can upload to your blog server theme directory if you want to make your changes permanent.
 </li>
@@ -621,9 +621,9 @@ Or, you can click on the "Generate Child Theme" button to download a child theme
 &nbsp;&nbsp;<label for="preview"><input type="checkbox" id="preview" name="preview" value="preview" <?php if ($TTOptions[$mPreKey]) echo 'checked="checked"'; ?> /> &nbsp;&nbsp; Preview the new color scheme (Only Administrators will see the changes)</label><br />
 &nbsp;&nbsp;<label for="activate"><input type="checkbox" id="activate" name="activate" value="activate" <?php if ($TTOptions[$mActKey]) echo 'checked="checked"'; ?> /> &nbsp;&nbsp; Activate the new color scheme (All users will see the changes)</label><br />
 <?php
-echo '&nbsp;&nbsp;<label for="footer1"><input type="checkbox" id="footer1"  name="footer" value="footer" ' ;
+echo '&nbsp;&nbsp;<label for="footer1" style="color:#e00;"><input type="checkbox" id="footer1"  name="footer" value="footer" ' ;
 if ($TTOptions[$mFooter]) echo 'checked="checked"';
-echo ' /> &nbsp;&nbsp; Suppress the tiny credit link at the bottom of your blog pages.</label><br />' ;
+echo " /> &nbsp;&nbsp; Suppress the tiny credit link at the bottom of your blog pages. (Please consider showing it if you would like to support this plugin. Thanks!)</label><br />" ;
 ?>
 </td>
 </tr>
