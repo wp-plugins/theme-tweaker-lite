@@ -4,7 +4,7 @@ Donate link: http://buy.thulasidas.com/theme-tweaker
 Tags: theme, theme colors, theme styles, theme customization, extra css, theme tweaking
 Requires at least: 2.5
 Tested up to: 3.8
-Stable tag: 3.60
+Stable tag: 4.00
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
 
@@ -32,15 +32,9 @@ And more. New features and bug fixes will first appear in the Pro version before
 
 *Note that Theme Tweaker may not work with some themes. Please verify its suitability using the Lite version before considering the Pro version.*
 
-= New in this Release =
-
-Compatibility checks for WordPress V3.8. Minor changes on admin page.
-
 == Upgrade Notice ==
 
-= 3.60 =
-
-Compatibility checks for WordPress V3.8. Minor changes on admin page.
+Adding a translation interface, and refactoring admin page functionality.
 
 == Screenshots ==
 
@@ -66,6 +60,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V4.00: Adding a translation interface, and refactoring admin page functionality. [Mar 22, 2014]
 * V3.60: Compatibility checks for WordPress V3.8. Minor changes on admin page. [Dec 20, 2013]
 * V3.50: Compatibility checks for WordPress V3.7. [Nov 11, 2013]
 * V3.40: Compatibility with WP3.6. Improvements in help tooltips. [Aug 10, 2013]
