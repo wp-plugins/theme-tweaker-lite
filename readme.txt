@@ -4,7 +4,7 @@ Donate link: http://buy.thulasidas.com/theme-tweaker
 Tags: theme, theme colors, theme styles, theme customization, extra css, theme tweaking
 Requires at least: 2.5
 Tested up to: 3.8
-Stable tag: 4.00
+Stable tag: 4.10
 License: GPL2 or later
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
