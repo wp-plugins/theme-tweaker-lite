@@ -5,6 +5,7 @@ Tags: theme, theme colors, theme styles, theme customization, extra css, theme t
 Requires at least: 2.5
 Tested up to: 3.8
 Stable tag: 4.00
+License: GPL2 or later
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
 
@@ -34,7 +35,7 @@ And more. New features and bug fixes will first appear in the Pro version before
 
 == Upgrade Notice ==
 
-Adding a translation interface, and refactoring admin page functionality.
+Internationalization.
 
 == Screenshots ==
 
@@ -60,6 +61,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V4.10: Internationalization. [Apr 4, 2013]
 * V4.00: Adding a translation interface, and refactoring admin page functionality. [Mar 22, 2014]
 * V3.60: Compatibility checks for WordPress V3.8. Minor changes on admin page. [Dec 20, 2013]
 * V3.50: Compatibility checks for WordPress V3.7. [Nov 11, 2013]
