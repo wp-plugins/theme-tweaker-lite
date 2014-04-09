@@ -3,7 +3,7 @@
   Plugin Name: Theme Tweaker
   Plugin URI: http://www.thulasidas.com/plugins/theme-tweaker
   Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-  Version: 4.21
+  Version: 4.22
   Author: Manoj Thulasidas
   Author URI: http://www.thulasidas.com
  */
@@ -390,7 +390,7 @@ if (!class_exists("ThemeTweaker")) {
       $css = preg_replace($reg, '', $css);
       // remove @import line
       $css = preg_replace('/\@.*?;/', '', $css);
-      $reg = '/.*\{/';
+      $reg = '/.*\{/s';
       preg_match($reg, $css, $start);
       $trim = $start[0];
       $reg = '/[^;^{]*#[a-fA-F0-9]{6}[^;\b]*;/';
@@ -669,7 +669,7 @@ if (!class_exists("ThemeTweaker")) {
         $help1[] = __('You can download the tweaked theme style sheet by clicking on the "Download Stylesheet" button. It saves the changes and then downloads a style.css file that you can upload to your blog server theme directory if you want to make your changes permanent.', 'theme-tweaker');
         $help1[] = __('Or, you can click on the "Generate Child Theme" button to download a child theme stylesheet (style.css) with the colors as specified above to your local computer, which you can upload to your blog server to make them permanent. Child theme is a better way to go, because it allows you to keep the original theme files untouched.', 'theme-tweaker');
         ?>
-        <h3>Instructions</h3>
+        <h3><?php _e('Instructions', 'theme-tweaker') ?></h3>
         <table>
           <tr style="vertical-align:top">
             <td style="width:400px">
