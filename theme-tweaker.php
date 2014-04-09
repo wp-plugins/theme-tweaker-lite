@@ -3,7 +3,7 @@
   Plugin Name: Theme Tweaker
   Plugin URI: http://www.thulasidas.com/plugins/theme-tweaker
   Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-  Version: 4.10
+  Version: 4.20
   Author: Manoj Thulasidas
   Author URI: http://www.thulasidas.com
  */
@@ -71,12 +71,23 @@ if (!class_exists("ThemeTweaker")) {
   class ThemeTweaker {
 
     var $isPro, $proStr;
-    var $slug, $domain, $plgDir, $plgURL, $ezTran, $ezAdmin, $myPlugins, $options;
+    var $slug, $domain, $plgDir, $plgURL, $ezTran, $ezAdmin, $myPlugins,
+            $ezOptions, $options, $optionName;
 
     //constructor
     function ThemeTweaker() {
       $this->plgDir = dirname(__FILE__);
       $this->plgURL = plugin_dir_url(__FILE__);
+      $defaultOptions = $this->mkDefaultOptions();
+      $mThemeName = get_option('stylesheet');
+      $this->optionName = "themeTweaker" . $mThemeName;
+      $this->options = get_option($this->optionName);
+      if (empty($this->options)) {
+        $this->options = $defaultOptions;
+      }
+      else {
+        $this->options = array_merge($defaultOptions, $this->options);
+      }
       if (is_admin()) {
         require_once($this->plgDir . '/EzTran.php');
         $this->domain = $this->slug = 'theme-tweaker';
@@ -89,66 +100,55 @@ if (!class_exists("ThemeTweaker")) {
       if ($this->isPro) {
         $this->strPro = ' Pro';
       }
-      if (isset($_POST['saveCSS']) || isset($_POST['saveChild'])) {
-        $file = 'style.css';
-        if (isset($_POST['saveCSS'])) {
-          $str = $_SESSION['strCSS'];
-        }
-        if (isset($_POST['saveChild'])) {
-          $str = $_SESSION['strChild'];
-        }
-        header('Content-Disposition: attachment; filename="' . $file . '"');
-        header("Content-Transfer-Encoding: ascii");
-        header('Expires: 0');
-        header('Pragma: no-cache');
-        ob_start();
-        print (htmlspecialchars_decode($str));
-        ob_end_flush();
-        exit(0);
-      }
     }
 
     function session_start() {
-      if (!session_id())
-        @session_start();
+      $session_id = session_id();
+      if (empty($session_id)) {
+        session_start();
+      }
     }
 
-    function init() {
-      $this->getAdminOptions();
-    }
-
-    //Returns an array of admin options
-    function getAdminOptions() {
+    function migrateOptions() {
+      $update = false;
       $mThemeName = get_option('stylesheet');
       $mOldKey = $mThemeName . '_OldColors';
       $mNewKey = $mThemeName . '_NewColors';
-//      $mPreKey = $mThemeName . '_Preview';
-//      $mActKey = $mThemeName . '_Activate';
-//      $mFooter = $mThemeName . '_Footer';
-      $mPreKey = 'preview';
-      $mActKey = 'activate';
-      $mFooter = 'footer_link';
-
+      $mPreKey = $mThemeName . '_Preview';
+      $mActKey = $mThemeName . '_Activate';
+      $mFooter = $mThemeName . '_Footer';
       $mCSSKey = $mThemeName . '_Tweaked';
       $mTrmKey = $mThemeName . '_Trim';
-      $mOptions = "themeTweaker" . $mThemeName;
-      $themeTweakerAdminOptions = array($mOldKey => array(),
-          $mNewKey => array(),
-          $mPreKey => true,
-          $mActKey => false,
-          $mFooter => true,
-          'kill_invites' => false,
-          'kill_rating' => false,
-          $mCSSKey => '',
-          $mTrmKey => '');
-      $this->options = get_option($mOptions);
-      if (!empty($this->options)) {
-        foreach ($this->options as $key => $option) {
-          $themeTweakerAdminOptions[$key] = $option;
+      $lookup = array($mOldKey => 'oldColors',
+          $mNewKey => 'newColors',
+          $mPreKey => 'preview',
+          $mActKey => 'activate',
+          $mFooter => 'kill_footer',
+          $mCSSKey => 'fullCSS',
+          $mTrmKey => 'trimmedCSS');
+      foreach ($lookup as $k => $v) {
+        if (isset($this->options[$k])) {
+          $this->options[$v] = $this->options[$k];
+          unset($this->options[$k]);
+          $update = true;
         }
       }
-      update_option($mOptions, $themeTweakerAdminOptions);
-      return $themeTweakerAdminOptions;
+      if ($update) {
+        update_option($this->optionName, $this->options);
+      }
+    }
+
+    //Returns an array of admin options
+    function mkDefaultOptions() {
+      $defaultOptions = array('oldColors' => array(),
+          'newColors' => array(),
+          'preview' => true,
+          'activate' => false,
+          'kill_footer' => true,
+          'fullCSS' => '',
+          'trimmedCSS' => '',
+          'kill_author' => false);
+      return $defaultOptions;
     }
 
     function tmpColor($hex) {
@@ -323,19 +323,25 @@ if (!class_exists("ThemeTweaker")) {
     // make a color table
     function makeTable($colors0, $colors1) {
       $table = '<table style="border-spacing=0;border-collapse=collapse;margin-right:auto;margin-left:auto;vertical-algin:middle;">' . "\n";
-      $table .= '<tr><td><b>Old Colors</b></td>' . "\n" .
-              '<td><b>Tweaked Colors</b><br />Click to Modify</td></tr>';
+      $table .= sprintf("<tr><td><b>%s</b></td>\n<td><b>%s</b><br />%s</td></tr>",
+              __('Old Colors'),
+              __('Tweaked Colors'),
+              __('Click to Modify'));
       foreach ($colors0 as $key => $val) {
         $newcol = $colors1[$key];
         $name = substr($val, -6);
         $nopicker = '<input readonly="readonly" class="color {picker:false}" ' .
-                'style="border:0px solid;" value="' . $val . '" title="Original Color [read only]"/>';
+                'style="border:0px solid;" value="' . $val . '" title="' .
+                __('Original Color [read only]', 'theme-tweaker') .
+                '"/>';
         $picker = '<input style="border:0px solid;" class="color {hash:true,caps:true,' .
                 'pickerFaceColor:\'transparent\',pickerFace:3,pickerBorder:0,' .
                 'pickerInsetColor:\'black\'}" onchange="document.getElementById(\'td_' .
                 $name . '\').bgcolor = \'#\'+this.color" value="' .
                 $newcol . '" name="in_' . $name . '" id="in_' . $name .
-                '" title="Tweaked Color [Click to pick, or Type in RRGGBB]" />';
+                '" title="' .
+                __('Tweaked Color [Click to pick, or Type in RRGGBB]', 'theme-tweaker') .
+                '" />';
 
         $table .= '<tr><td style="background-color:' . $val . '">' . $nopicker . '</td>' . "\n" .
                 '<td style="background-color:' . $newcol . '" id="td_' . $name . '">' .
@@ -357,7 +363,7 @@ if (!class_exists("ThemeTweaker")) {
 
     function initRandomColors($colors) {
       $js = '';
-      foreach ($colors as $key => $val) {
+      foreach ($colors as $val) {
         $name = substr($val, -6);
         $js .= "rcol=random_color('hex'); " .
                 "document.getElementById('td_" . $name . "').bgcolor=rcol;" .
@@ -368,8 +374,8 @@ if (!class_exists("ThemeTweaker")) {
 
     function patchURL($val) {
       // first, pick up the argument to the URL function
-      $reg = '.*[uU][rR][lL]\(([^\)]+)\)';
-      eregi($reg, $val, $url);
+      $reg = '/.*[uU][rR][lL]\(([^\)]+)\)/';
+      preg_match($reg, $val, $url);
       $url = trim($url[1]);
       $newurl = get_theme_root_uri() . '/' . get_option('stylesheet') .
               '/' . trim($url, '"\'');
@@ -439,8 +445,9 @@ if (!class_exists("ThemeTweaker")) {
       // Reset
       $table .= '</td></tr>' . "\n" . '<tr><td>';
       $table .= '<input type="button" style="width:100%;" name="reset" value="Reset Colors" ';
-      $table .= 'title="Reset the colors to the original colors of ';
-      $table .= $mThemeName . '" ';
+      $table .= 'title="' .
+              sprintf(__('Reset the colors to the original colors of %s', 'theme-tweaker'), $mThemeName);
+      $table .= '" ';
       $table .= 'onclick=" ';
       $table .= $this->initNewColors($colors0, $colors0);
       $table .= '" />';
@@ -449,8 +456,9 @@ if (!class_exists("ThemeTweaker")) {
       $table .= '</td></tr>' . "\n" . '<tr><td>';
       $newcol = $this->mapFunc($colors0, 'negColor');
       $table .= '<input type="button" style="width:100%;" name="negative" value="Invert Colors" ';
-      $table .= 'title="Color negatives of the original colors in ';
-      $table .= $mThemeName . '" ';
+      $table .= 'title="' .
+              sprintf(__('Color negatives of the original colors in %s', 'theme-tweaker'), $mThemeName);
+      $table .= '" ';
       $table .= 'onclick=" ';
 
       $table .= $this->initNewColors($colors0, $newcol);
@@ -460,8 +468,9 @@ if (!class_exists("ThemeTweaker")) {
       $table .= '</td></tr>' . "\n" . '<tr><td>';
       $newcol = $this->mapFunc($colors0, 'greyColor');
       $table .= '<input type="button" style="width:100%;" name="grey" value="Black &amp; White" ';
-      $table .= 'title="Desaturate to grey scales of the original colors of ';
-      $table .= $mThemeName . '" ';
+      $table .= 'title="' .
+              sprintf(__('Desaturate to grey scales of the original colors of %s', 'theme-tweaker'), $mThemeName);
+      $table .= '" ';
       $table .= 'onclick=" ';
       $table .= $this->initNewColors($colors0, $newcol);
       $table .= '" />';
@@ -471,8 +480,9 @@ if (!class_exists("ThemeTweaker")) {
       $newcol = $this->mapFunc($colors0, 'negColor');
       $newcol = $this->mapFunc($newcol, 'greyColor');
       $table .= '<input type="button" style="width:100%;" name="greyneg" value="B&amp;W Negative" ';
-      $table .= 'title="Negative of the desaturated colors to the original colors of ';
-      $table .= $mThemeName . '" ';
+      $table .= 'title="' .
+              sprintf(__('Negative of the desaturated colors to the original colors of %s', 'theme-tweaker'), $mThemeName);
+      $table .= '" ';
       $table .= ' onclick=" ';
       $table .= $this->initNewColors($colors0, $newcol);
       $table .= '" />';
@@ -481,8 +491,9 @@ if (!class_exists("ThemeTweaker")) {
       $table .= '</td></tr>' . "\n" . '<tr><td>';
       $newcol = $this->mapFunc($colors0, 'sepia');
       $table .= '<input type="button" style="width:100%;" name="sepia" value="Sepia Effect" ';
-      $table .= 'title="Generate sepia colours out of the original colors of ';
-      $table .= $mThemeName . '" ';
+      $table .= 'title="' .
+              sprintf(__('Generate sepia colours out of the original colors of %s', 'theme-tweaker'), $mThemeName);
+      $table .= '" ';
       $table .= 'onclick=" ';
       $table .= $this->initNewColors($colors0, $newcol);
       $table .= '" />';
@@ -490,8 +501,9 @@ if (!class_exists("ThemeTweaker")) {
       // random colors
       $table .= '</td></tr>' . "\n" . '<tr><td>';
       $table .= '<input type="button" style="width:100%;" name="random" value="Random Colors" ';
-      $table .= 'title="Generate random colors while keeping the styles of ';
-      $table .= $mThemeName . '" ';
+      $table .= 'title="' .
+              sprintf(__('Generate random colors while keeping the styles of %s', 'theme-tweaker'), $mThemeName);
+      $table .= '" ';
       $table .= 'onclick=" ';
       $table .= $this->initRandomColors($colors0);
       $table .= '" />';
@@ -504,7 +516,7 @@ if (!class_exists("ThemeTweaker")) {
     function setOptionValues() {
       $error = EzBaseOption::setValues($this->options, $this->ezOptions);
       if (WP_DEBUG && !empty($error)) {
-      //   echo "<div class='error'>$error</div>";
+
       }
     }
 
@@ -522,9 +534,9 @@ if (!class_exists("ThemeTweaker")) {
       $o->desc = __('Activate the new color scheme (All users will see the changes)', 'theme-tweaker');
       $this->ezOptions["activate"] = clone $o;
 
-      $o->name = "footer_link";
+      $o->name = "kill_footer";
       $o->desc = "<span style='color:red'>" . __('Suppress the tiny credit link at the bottom of your blog pages. (Please consider showing it if you would like to support this plugin. Thanks!)', 'theme-tweaker') . "</span>";
-      $this->ezOptions["footer_link"] = clone $o;
+      $this->ezOptions["kill_footer"] = clone $o;
     }
 
     //Prints out the admin page
@@ -547,18 +559,6 @@ if (!class_exists("ThemeTweaker")) {
       $ez = $this->ezAdmin;
 
       $mThemeName = get_option('stylesheet');
-      $mOldKey = $mThemeName . '_OldColors';
-      $mNewKey = $mThemeName . '_NewColors';
-//      $mPreKey = $mThemeName . '_Preview';
-//      $mActKey = $mThemeName . '_Activate';
-//      $mFooter = $mThemeName . '_Footer';
-      $mPreKey = 'preview';
-      $mActKey = 'activate';
-      $mFooter = 'footer_link';
-
-      $mCSSKey = $mThemeName . '_Tweaked';
-      $mTrmKey = $mThemeName . '_Trim';
-      $this->options = $this->getAdminOptions();
 
       // grab the theme stylesheet and print it here
       $stylefile = get_theme_root() . '/' . $mThemeName . '/style.css';
@@ -567,16 +567,15 @@ if (!class_exists("ThemeTweaker")) {
 
       // if the theme colors haven't changed, use the new colors from DB
       // else init them to the original colors
-      if ($colors0 == $this->options[$mOldKey]) {
-        $colors1 = $this->options[$mNewKey];
+      if ($colors0 == $this->options['oldColors']) {
+        $colors1 = $this->options['newColors'];
       }
       else {
         $colors1 = $colors0;
       }
 
-      if (isset($_POST['update_themeTweakerSettings']) ||
-              isset($_POST['saveCSS']) || isset($_POST['saveChild']) ||
-              isset($_POST['clean_db'])) {
+      if (isset($_POST['saveChanges']) ||
+              isset($_POST['cleanDB'])) {
         // loop over the new color fields to get colors1
         foreach ($colors0 as $key => $val) {
           $name = 'in_' . substr($val, -6);
@@ -587,26 +586,6 @@ if (!class_exists("ThemeTweaker")) {
             $colors1[$key] = '#FFFFFF';
           }
         }
-        // check activate and preview buttons
-        if (isset($_POST['preview'])) {
-          // echo 'Will Preview ' ;
-          $this->options[$mPreKey] = true;
-        }
-        else {
-          $this->options[$mPreKey] = false;
-        }
-        if (isset($_POST['activate'])) {
-          $this->options[$mActKey] = true;
-        }
-        else {
-          $this->options[$mActKey] = false;
-        }
-        if (isset($_POST['footer'])) {
-          $this->options[$mFooter] = true;
-        }
-        else {
-          $this->options[$mFooter] = false;
-        }
         if (isset($_POST['kill_invites'])) {
           $this->options['kill_invites'] = $_POST['kill_invites'];
         }
@@ -614,7 +593,7 @@ if (!class_exists("ThemeTweaker")) {
           $this->options['kill_rating'] = $_POST['kill_rating'];
         }
 
-        // need to replace in two steps, just incase colors0 and colors1 have overlaps
+        // need to replace in two steps, just in case colors0 and colors1 have overlaps
         $tmpcols = $this->mapFunc($colors0, 'tmpColor');
 
         // generate the new style
@@ -623,12 +602,11 @@ if (!class_exists("ThemeTweaker")) {
         $styletmp = $func($colors0, $tmpcols, $stylecontent);
         $stylestr = $func($tmpcols, $colors1, $styletmp);
 
-        $this->options[$mOldKey] = $colors0;
-        $this->options[$mNewKey] = $colors1;
-        $this->options[$mCSSKey] = $stylestr;
+        $this->options['oldColors'] = $colors0;
+        $this->options['newColors'] = $colors1;
+        $this->options['fullCSS'] = $stylestr;
         $trimstr = $this->trimCSS($stylestr);
-        $this->options[$mTrmKey] = $trimstr;
-        $mOptions = "themeTweaker" . $mThemeName;
+        $this->options['trimmedCSS'] = $trimstr;
 
         $this->mkEzOptions();
         $this->setOptionValues();
@@ -644,8 +622,8 @@ if (!class_exists("ThemeTweaker")) {
           }
         }
 
-        update_option($mOptions, $this->options);
-        if (isset($_POST['clean_db'])) {
+        update_option($this->optionName, $this->options);
+        if (isset($_POST['cleanDB'])) {
           $this->cleanDB('themeTweaker');
         }
       }
@@ -659,10 +637,10 @@ if (!class_exists("ThemeTweaker")) {
         <h2>Theme Tweaker <a href="http://validator.w3.org/" target="_blank"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid HTML5" title="Theme Tweaker Admin Page is certified Valid HTML5" height="31" onmouseover="Tip('Theme Tweaker Admin Page is certified Valid HTML5, with no errors in the HTML code generated by the plugin.')" onmouseout="UnTip()" width="88" class="alignright"/></a></h2>
 
         <div id="status" class="updated"><?php
-          if (isset($_POST['update_themeTweakerSettings'])) {
+          if (isset($_POST['saveChanges'])) {
             echo $_SESSION['statUpdate'];
           }
-          if (isset($_POST['clean_db'])) {
+          if (isset($_POST['cleanDB'])) {
             echo $_SESSION['statClean'];
           }
           ?>
@@ -747,10 +725,10 @@ if (!class_exists("ThemeTweaker")) {
                 <table>
                   <tr style="vertical-align:middle;text-align:center;">
                     <td style="width:350px">
-      <?php echo $this->makeTable($colors0, $colors1) ?>
+                      <?php echo $this->makeTable($colors0, $colors1) ?>
                     </td>
                     <td style="width:350px">
-      <?php echo $this->makeButtons($colors0, $colors1) ?>
+                      <?php echo $this->makeButtons($colors0, $colors1) ?>
                     </td>
                   </tr>
                 </table>
@@ -764,17 +742,6 @@ if (!class_exists("ThemeTweaker")) {
           }
           // make the strings to save to file, just in case the user wants them
           $_SESSION['strCSS'] = $this->makeString('CSS');
-          $_SESSION['strChild'] = $this->makeString('child');
-          if (isset($_POST['childName'])) {
-            $childName = trim($_POST['childName']);
-          }
-          if (empty($childName)) {
-            $childName = $mThemeName . '-child';
-          }
-          $childDir = preg_replace('/\s+/', '-', $childName);
-          $_SESSION['childName'] = $childName;
-          $_SESSION['childDir'] = $childDir;
-          $mThemeRoot = addslashes(get_theme_root());
 
           // status messages
           $statUpdate = htmlspecialchars(__('Updated Settings', "theme-tweaker"));
@@ -782,23 +749,12 @@ if (!class_exists("ThemeTweaker")) {
 
           $statClean = htmlspecialchars(__("Database has been cleaned. All your options for this plugin (for all themes) have been removed.", "theme-tweaker"));
           $_SESSION['statClean'] = $statClean;
-
-          $statCSS = htmlspecialchars('Updated Settings and Generated the CSS Stylefile for your theme "' . $mThemeName . '." <br />Copy the downloaded style.css file to your blog server directory: <br />' . $mThemeRoot . '/' . $mThemeName . '<br />to make the color tweaks permanent.');
-
-          $statChild = htmlspecialchars('Updated settings and generated a child theme stylefile for your theme "' . $mThemeName . '" with the name "' . $childName . '."<br />On your blog server, create a directory for the child theme. Directory to create is:<br />' . $mThemeRoot . '/' . $childDir . '<br />and copy the downloaded style.css file there to install the new child theme.');
-
-          echo
-          '<script type="text/javascript">
-function setStatus(status){
-document.getElementById(\'status\').innerHTML = status;
-}
-</script>';
           ?>
-
           <div class="submit">
-            Save your color tweaks and options?<br /><br />
-
             <?php
+            echo "<h4>" . __('Save your color tweaks and options?', 'theme-tweaker') .
+                    "</h4>";
+
             $preview = new EzSubmit('previewNow');
             $preview->desc = __('Preview', 'theme-tweaker');
             $preview->title = __('Check the preview option, save your options and <em>then</em> click here to see your color scheme', 'theme-tweaker');
@@ -806,12 +762,12 @@ document.getElementById(\'status\').innerHTML = status;
             $preview->onclick = "window.open('$siteurl', 'previewNow', 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=' + 0.9 * screen.width + 'px,height=' + 0.8 * screen.height + 'px,left=' + 0.05 * screen.width + ',top=' + 0.05 * screen.width).focus();";
             $preview->tipTitle = $preview->desc;
 
-            $update = new EzSubmit('update_themeTweakerSettings');
+            $update = new EzSubmit('saveChanges');
             $update->desc = __('Save Changes', 'theme-tweaker');
             $update->title = __('Save the changes as specified above', 'theme-tweaker');
             $update->tipTitle = $update->desc;
 
-            $cleanDB = new EzSubmit('clean_db');
+            $cleanDB = new EzSubmit('cleanDB');
             $cleanDB->desc = __('Clean Database', 'theme-tweaker');
             $cleanDB->title = __('The <b>Database Cleanup</b> button discards all your AdSense settings you have saved so far for <b>all</b> the themes, including the current one. Use it only if you know that you will not be using these themes. Please be careful with all database operations -- keep a backup.', 'theme-tweaker');
             $cleanDB->tipWarning = true;
@@ -845,10 +801,12 @@ document.getElementById(\'status\').innerHTML = status;
           <tr><td>
               <ul style="padding-left:10px;list-style-type:circle; list-style-position:inside;" >
                 <li>
-                  <b>Theme Tweaker</b> uses the excellent Javascript color picker by <a href="http://jscolor.com" target="_blank" title="Javascript color picker"> JScolor</a>.
+                  <?php printf(__('%s uses the Javascript/DHTML color picker by %s', 'easy-common'), '<b>Theme Tweaker' . $this->strPro . '</b>', '<a href="http://jscolor.com" target="_blank" title="Javascript color picker"> JScolor</a>.');
+                  ?>
                 </li>
                 <li>
-                  It also uses the excellent Javascript/DHTML tooltips by <a href="http://www.walterzorn.com" target="_blank" title="Javascript, DTML Tooltips"> Walter Zorn</a>.
+                  <?php printf(__('%s uses the excellent Javascript/DHTML tooltips by %s', 'easy-common'), '<b>Theme Tweaker' . $this->strPro . '</b>', '<a href="http://www.walterzorn.com" target="_blank" title="Javascript, DTML Tooltips"> Walter Zorn</a>.');
+                  ?>
                 </li>
               </ul>
             </td>
@@ -873,11 +831,7 @@ document.getElementById(\'status\').innerHTML = status;
     }
 
     function footer_action() {
-      // $mThemeName = get_option('stylesheet');
-      // $mFooter = $mThemeName . '_Footer';
-      $mFooter = 'footer_link';
-      $this->options = $this->getAdminOptions();
-      $footer = $this->options[$mFooter];
+      $footer = $this->options['kill_footer'];
       if ($footer) {
         return;
       }
@@ -896,14 +850,9 @@ document.getElementById(\'status\').innerHTML = status;
       if (isset($_GET['preview'])) {
         return;
       }
-      $mThemeName = get_option('stylesheet');
-      $mTrmKey = $mThemeName . '_Trim';
-      $mPreKey = $mThemeName . '_Preview';
-      $mActKey = $mThemeName . '_Activate';
-      $this->options = $this->getAdminOptions();
-      $stylestr = $this->options[$mTrmKey];
-      if (!empty($this->options[$mActKey]) ||
-              (!empty($this->options[$mPreKey]) && current_user_can('switch_themes'))) {
+      $stylestr = $this->options['trimmedCSS'];
+      if (!empty($this->options['activate']) ||
+              (!empty($this->options['preview']) && current_user_can('switch_themes'))) {
         echo "\n" . '<!-- Theme Tweaker (start) -->' . "\n" .
         '<style type="text/css">' . "\n" .
         $stylestr .
@@ -912,12 +861,7 @@ document.getElementById(\'status\').innerHTML = status;
     }
 
     function makeString($type) {
-      $this->options = $this->getAdminOptions();
-      $mThemeName = get_option('stylesheet');
-      $mCSSKey = $mThemeName . '_Tweaked';
-      $mTrmKey = $mThemeName . '_Trim';
-      $stylestr = $this->options[$mCSSKey];
-      ob_start();
+      $stylestr = $this->options['fullCSS'];
       if ($type == 'CSS') {
         return htmlspecialchars($stylestr);
       }
@@ -944,10 +888,10 @@ if (class_exists("ThemeTweaker")) {
     }
 
     add_action('admin_menu', 'themeTwk_ap');
-    add_action('activate_' . basename($thmTwk->plgDir) . '/' . basename(__FILE__), array($thmTwk, 'init'));
     add_filter('plugin_action_links', array($thmTwk, 'plugin_action'), -10, 2);
     add_action('wp_head', array($thmTwk, 'head_action'), 99);
     add_action('wp_footer', array($thmTwk, 'footer_action'));
     add_action('init', array($thmTwk, 'session_start'));
+    register_activation_hook(__FILE__, array($thmTwk, 'migrateOptions'));
   }
 }
