@@ -41,6 +41,21 @@ if (!class_exists('EzAdmin')) {
       }
     }
 
+    function renderNags(&$options) {
+      if (empty($options['kill_rating'])) {
+        $this->renderRating();
+      }
+      else {
+        echo "<input type='hidden' name='kill_rating' value='true' />";
+      }
+      if (empty($options['kill_invites'])) {
+        $this->renderInvite();
+      }
+      else {
+        echo "<input type='hidden' name='kill_invites' value='true' />";
+      }
+    }
+
     function renderInvite() {
       if ($this->killAuthor) {
         return;
@@ -214,7 +229,7 @@ $moreInfo
 
       $s1 = sprintf(__('Download the Lite version of %s', 'easy-common'), $plg['value']);
       $s2 = __('Lite Version', 'easy-common');
-      $s3 =  sprintf(__('Buy the Pro version of %s for $%.2f', 'easy-common'), $plg['value'], $price);
+      $s3 = sprintf(__('Buy the Pro version of %s for $%.2f', 'easy-common'), $plg['value'], $price);
       $s4 = __('Pro Version', 'easy-common');
       $s5 = __('Buy the Pro Version', 'easy-common');
 
@@ -226,9 +241,9 @@ $moreInfo
       $s8 = sprintf(__('It costs only $%.2f!', 'easy-common'), $price);
       $s9 = __('Instant download link.', 'easy-common');
       $value .= '<b><i> Lite</i></b>';
-        $s10 = sprintf(__('Thank you for using %s. The \"Pro\" version gives you more options.', 'easy-common'), $value);
-        $s11 = __("Consider buying it.", 'easy-common');
-        echo "$s10 $filter $s11 <a href='http://buy.thulasidas.com/$slug' title='$s3. $s9'>$s8</a>";
+      $s10 = sprintf(__('Thank you for using %s. The "Pro" version gives you more options.', 'easy-common'), $value);
+      $s11 = __("Consider buying it.", 'easy-common');
+      echo "$s10 $filter $s11 <a href='http://buy.thulasidas.com/$slug' title='$s3. $s9'>$s8</a>";
       echo "</div>";
     }
 
@@ -473,6 +488,8 @@ ENDDIVS;
     }
 
     function renderSupport() {
+      echo '<div style="background-color:#fcf;padding:5px;border: solid 1px;margin:5px;">
+';
       $plgURL = $this->plgURL;
       $plg = $this->plg;
       $slug = $this->slug;
@@ -497,6 +514,7 @@ ENDDIVS;
       printf(__('You are using %s (V%s)', 'easy-common'), $value, $info[0]['Version']);
       echo "]</em></small>";
       $_SESSION['ezSupport'] = $info[0]['Info'];
+      echo "</div>";
     }
 
     function renderWhyPro($short = false) {
