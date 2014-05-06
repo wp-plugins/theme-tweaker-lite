@@ -3,7 +3,7 @@
   Plugin Name: Theme Tweaker
   Plugin URI: http://www.thulasidas.com/plugins/theme-tweaker
   Description: <em>Lite Version</em>: Tweak your theme colors (yes, any theme) with no CSS stylesheet editing. To tweak your theme, go to <a href="themes.php?page=theme-tweaker.php"> Appearance (or Design) &rarr; Theme Tweaker</a>.
-  Version: 4.23
+  Version: 4.24
   Author: Manoj Thulasidas
   Author URI: http://www.thulasidas.com
  */
@@ -26,7 +26,10 @@
  */
 
 if (class_exists("ThemeTweaker")) {
-  die("<strong><em>Theme Tweaker Pro</em></strong> seems to be active.<br />Please use the Pro version, or deactivate it before activating <strong><em>Theme Tweaker Lite</em></strong>.");
+  $plg = "Theme Tweaker Lite";
+  $lite = plugin_basename(__FILE__);
+  include_once('ezDenyLite.php');
+  ezDenyLite($plg, $lite);
 }
 
 if (!function_exists('str_ireplace')) {
@@ -542,7 +545,7 @@ if (!class_exists("ThemeTweaker")) {
       if ($this->ezTran->printAdminPage()) {
         return;
       }
-      require_once($this->plgDir . '/myPlugins.php');
+      require($this->plgDir . '/myPlugins.php');
       $slug = $this->slug;
       $plg = $this->myPlugins[$slug];
       $plgURL = $this->plgURL;
