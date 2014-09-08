@@ -254,7 +254,7 @@ $moreInfo
       $plgKey = $this->getPlgKey();
       $promoClick = addslashes("onclick=\"popupwindow('http://www.thulasidas.com/promo.php?key=$plgKey','Get Pro', 1024, 768);return false;\"");
       $promoTip = htmlspecialchars("$s3. $s9<br /><a style=\"color:red;font-weight:bold\" href=\"http://www.thulasidas.com/promo.php?key=$plgKey\" target=_blank $promoClick>" . __("Limited Time Offer. Get the Pro version for less than a dollar!", 'easy-common') . "</a>");
-      
+
       echo "$s10 $filter $s11 <br /><a href='http://buy.thulasidas.com/$slug' title='$s3. $s9' onmouseover=\"Tip('$promoTip', WIDTH, 200, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, 5, 5], TITLE, 'Limited Time Offer')\">$s8</a>";
       echo "</div>";
     }
@@ -557,13 +557,14 @@ ENDDIVS;
       $toolTip = $plg['title'];
       $price = $plg['price'];
       $buyURL = "http://buy.thulasidas.com/$slug";
+      $infoURL = "http://www.thulasidas.com/plugins/$slug";
       $s1 = sprintf(__('Get %s', 'easy-common'), $value);
       $s2 = sprintf(__('More info about %s', 'easy-common'), $value);
       $s3 = sprintf(__('Buy the Pro version of %s for $%.2f', 'easy-common'), $value, $price);
       $s4 = __('More Info', 'easy-common');
 
       $onclick = "onclick=\"popupwindow('$buyURL','$s1', 1024, 768);return false;\"";
-      $moreInfo = " &nbsp;  &nbsp; <a href='$buyURL' title='$s2'> $s4 </a>&nbsp; <a href='$buyURL' $onclick title='$s3'>Get Pro Version</a>";
+      $moreInfo = " &nbsp;  &nbsp; <a href='$infoURL' title='$s2' target=_blank> $s4 </a>&nbsp; <a href='$buyURL' $onclick title='$s3'>Get Pro Version</a>";
       $toolTip .= addslashes('<br />' . $moreInfo);
       $why = addslashes($plg['pro']);
       echo '<div style="background-color:#cff;padding:5px;border: solid 1px;margin:5px;padding-bottom:15px;">';
