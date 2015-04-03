@@ -23,11 +23,25 @@ if (!class_exists('EzAdmin')) {
 
     var $plgURL, $plgFile, $plg, $slug, $name;
     var $killAuthor = false;
+    var $cdn;
+    static $premia = array(array('key' => 'ads-ez',
+            'name' => 'Ads EZ',
+            'desc' => 'A Personal Ad Server'),
+        array('key' => 'ezpaypal',
+            'name' => 'EZ PayPal',
+            'desc' => 'Your own e-shop for Digital Goods'),
+        array('key' => 'easy-adsense',
+            'name' => 'Easy AdSense Ultra',
+            'desc' => 'Bootstrap/AJAX version of Easy AdSense'),
+        array('key' => 'google-adsense',
+            'name' => 'Google AdSense Ultra',
+            'desc' => 'The Ultimate AdSense plugin - Combines Easy AdSense, AdSense Now! and Google AdSense in one sleek, modern interface.'));
 
     function __construct($plg, $slug, $plgURL) {
       $this->plg = $plg;
       $this->slug = $slug;
       $this->plgURL = $plgURL;
+      $this->cdn = $plgURL . 'img';
     }
 
     function __destruct() {
@@ -68,9 +82,7 @@ if (!class_exists('EzAdmin')) {
       $yesTitle = __('Get the Pro version now!', 'easy-common');
       $noTip = __('Continue using the Lite version, and hide this message. After clicking this button, please remember to save your options to hide this box for good.', 'easy-common');
       $noTitle = __('Stay Lite', 'easy-common');
-      $plgKey = $this->getPlgKey();
-      $onClick = addslashes("onclick=\"popupwindow('http://www.thulasidas.com/promo.php?key=$plgKey','Get Pro', 1024, 768);return false;\"");
-      $hideTip = htmlspecialchars(__('Click the link to hide this box. After clicking this link, please remember to save your options to hide this box for good.', 'easy-common') . "<br /><a style=\"color:red;font-weight:bold\" href=\"http://www.thulasidas.com/promo.php?key=$plgKey\" target=_blank $onClick>" . __("Limited Time Offer. Get the Pro version for less than a dollar!", 'easy-common') . "</a>");
+      $hideTip = __('Click the link to hide this box. After clicking this link, please remember to save your options to hide this box for good.', 'easy-common');
       if (empty($plg['benefits'])) {
         return;
       }
@@ -120,13 +132,30 @@ function buttonwhich(message) {
 ENDINVITE;
     }
 
-    function getPlgKey() {
-      $plgKey = basename($this->plgFile, '.php');
-      if (in_array($plgKey, array('easy-ads', 'google-adsense', 'theme-tweaker'))) {
-        $plgKey .= '-lite';
+    function getPlgKey($slug = '') {
+      if (empty($slug)) {
+        $plgKey = basename($this->plgFile, '.php');
       }
-      if ($plgKey == 'easy-paypal-lite') {
-        $plgKey = 'easy-paypal-lte';
+      else {
+        $plgKey = $slug;
+      }
+      $plgKey = str_replace(array('-lite', '-pro'), "", $plgKey);
+      switch ($plgKey) {
+        case 'easy-latex':
+          $plgKey = 'easy-wp-latex-lite';
+          break;
+        case 'ezpaypal':
+        case 'easy-paypal':
+        case 'easy-paypal-lite':
+          $plgKey = 'easy-paypal-lte';
+          break;
+        case 'ads-ez':
+        case 'easy-quiz':
+        case 'easy-text-links':
+        case 'a-function-hitman':
+          break;
+        default:
+          $plgKey .= '-lite';
       }
       return $plgKey;
     }
@@ -140,8 +169,7 @@ ENDINVITE;
       $plgCTime = filemtime($plgFile);
       $plgLongName = $plg['value'];
       $plgKey = $this->getPlgKey();
-      $onClick = addslashes("onclick=\"popupwindow('http://www.thulasidas.com/promo.php?key=$plgKey','Get Pro', 1024, 768);return false;\"");
-      $hideTip = htmlspecialchars(__('Click the link to hide this box. After clicking this link, please remember to save your options to hide this box for good.', 'easy-common') . "<br /><a style=\"color:red;font-weight:bold\" href=\"http://www.thulasidas.com/promo.php?key=$plgKey\" target=_blank $onClick>" . __("Limited Time Offer. Get the Pro version for less than a dollar!", 'easy-common') . "</a>");
+      $hideTip = htmlspecialchars(__('Click the link to hide this box. After clicking this link, please remember to save your options to hide this box for good.', 'easy-common'));
 
       if (time() > $plgCTime + (60 * 60 * 24 * 30)) {
         $msg = __("You've installed this plugin over a month ago.", 'easy-common');
@@ -162,7 +190,7 @@ ENDINVITE;
       echo <<<ENDRATING
 <div class='updated' id='rating'>
 <p>Thanks for using <i><b>$plgLongName</b></i>! $msg <br />
-$s1 <a href='http://wordpress.org/extend/plugins/$plgKey/' onclick="popupwindow('http://wordpress.org/extend/plugins/$plgKey/','$s2', 1024, 768);return false;">$s2</a>
+$s1 <a href='http://wordpress.org/extend/plugins/$plgKey/' class='popup' data-height='1024'>$s2</a>
 <small style='font-weight:normal;'><a id='hideRating' $display href='#' style='float:right; display:block; border:none;'  onmouseover="Tip('$hideTip', WIDTH, 200, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, 5, 5], TITLE, 'Hide this Box')" onclick = "hideme()">
 $s3</a></small></p></div>
 <input type="hidden" id="kill_rating" name="kill_rating" value="" />
@@ -179,46 +207,45 @@ function hideme() {
 ENDRATING;
     }
 
-    function renderHeadText() {
-      $plgURL = $this->plgURL;
+    function renderHeadText($isPro = false) {
       $plg = $this->plg;
       $slug = $this->slug;
       $value = '<em><strong>' . $plg['value'] . '</strong></em>';
-      $toolTip = $plg['title'];
       $price = $plg['price'];
-      $onclick = "onclick=\"popupwindow('http://buy.thulasidas.com/$slug','Get Pro}', 1024, 768);return false;\"";
-
+      $onclick = "class='popup'";
+      $s1 = sprintf(__('Download the Lite version of %s', 'easy-common'), $value);
       $s2 = __('Lite Version', 'easy-common');
       $s3 = sprintf(__('Buy the Pro version of %s for $%.2f', 'easy-common'), $plg['value'], $price);
       $s4 = __('Instant download link.', 'easy-common');
       $s5 = __('Pro Version', 'easy-common');
-      $moreInfo = "$s2 and <b><a href='http://buy.thulasidas.com/$slug' title='$s3. $s4' $onclick>$s5</a></b>";
-      $toolTip .= addslashes('<br />' . $moreInfo);
       $why = addslashes($plg['pro']);
-      $version = 'Lite';
+      if ($isPro) {
+        $moreInfo = "&nbsp; <a href='http://buy.thulasidas.com/lite/$slug.zip' title='$s1'>$s2 </a>&nbsp; <a href='http://buy.thulasidas.com/$slug' title='$s3. $s4' $onclick>$s5</a>";
+        $version = 'Pro';
+      }
+      else {
+        $moreInfo = "$s2 and <b><a href='http://buy.thulasidas.com/$slug' title='$s3. $s4' $onclick>$s5</a></b>";
+        $version = 'Lite';
+      }
 
       $s6 = sprintf(__('You are using the %s version of %s, which is available in two versions:', 'easy-common'), $version, $value);
       $s7 = sprintf(__('And it costs only $%.2f!', 'easy-common'), $price);
       $s8 = __('Get the Pro version now!', 'easy-common');
 
-      $plgKey = $this->getPlgKey();
-      $promoClick = "onclick=\"popupwindow('http://www.thulasidas.com/promo.php?key=$plgKey','Get Pro', 1024, 768);return false;\"";
-      $promoTip = "<a style=\"color:red;font-weight:bold\" href=\"http://www.thulasidas.com/promo.php?key=$plgKey\" target=_blank $promoClick>" . __("Limited Time Offer. Get the Pro version for less than a dollar!", 'easy-common') . "</a>";
-
       echo "<b>$s8</b>
-<a href='http://buy.thulasidas.com/$slug' title='$s3. $s4' $onclick><img src='$plgURL/ezpaypal.png' alt='ezPayPal' class='alignright'/></a>
+<a href='http://buy.thulasidas.com/$slug' title='$s3. $s4' $onclick><img src='{$this->cdn}/ezpaypal.png' alt='ezPayPal' class='alignright'/></a>
 <br />
 $s6
 <ul><li>
 $moreInfo
 </li>
 <li>$why $s7</li>
-</ul>$promoTip";
+</ul>";
     }
 
-    function renderProText() {
+    function renderProText($isPro = false) {
       echo "<div id='pro' style='display:none'>";
-      $this->renderHeadText();
+      $this->renderHeadText($isPro);
       echo "</div>";
       if ($this->killAuthor) {
         return;
@@ -230,173 +257,99 @@ $moreInfo
       if (stripos($slug, 'adsense') !== FALSE) {
         $filter = __("e.g., a filter to ensure AdSense policy compliance.", 'easy-common');
       }
-      $toolTip = $plg['title'];
       $price = $plg['price'];
-      $onclick = "onclick=\"popupwindow('http://buy.thulasidas.com/$slug','Get Pro', 1024, 768);return false;\"";
+      $onclick = "class='popup'";
 
-      $s1 = sprintf(__('Download the Lite version of %s', 'easy-common'), $plg['value']);
-      $s2 = __('Lite Version', 'easy-common');
       $s3 = sprintf(__('Buy the Pro version of %s for $%.2f', 'easy-common'), $plg['value'], $price);
       $s4 = __('Pro Version', 'easy-common');
       $s5 = __('Buy the Pro Version', 'easy-common');
 
-      $moreInfo = "&nbsp; <a href='http://buy.thulasidas.com/lite/$slug.zip' title='$s1'>$s2 </a>&nbsp; <a href='http://buy.thulasidas.com/$slug' title='$s3' $onclick>$s4</a>";
-      $toolTip .= addslashes('<br />' . $moreInfo);
-      echo "<div style='background-color:#ffcccc;padding:5px;border: solid 1px;'>
-<div style='font-size:14px;color:#a48;font-variant: small-caps;text-decoration:underline;text-align:center;' $onclick onmouseover=\"TagToTip('pro', WIDTH, 300, TITLE, '$s5',STICKY, 1, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, 5, 5])\"><b>$s4</b></div>";
+      $select = rand(1, 4);
+      echo "<div style='background-color:#ffcccc;padding:5px;border:solid 1px;height:238px;overflow-y:auto;margin:0' onmouseover=\"TagToTip('pro', WIDTH, 300, TITLE, '$s5',STICKY, 1, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, 0, 5])\"><div style='font-size:14px;color:#a48;font-variant: small-caps;text-decoration:underline;text-align:center;'><b><a href='http://buy.thulasidas.com/$slug' $onclick>$s4<img src='{$this->cdn}/pro-$select.jpg' border='0' alt='Pro Version' style='display: block;margin-left:auto;margin-right:auto;max-height:100px' /></a></b></div>";
 
       $s8 = sprintf(__('It costs only $%.2f!', 'easy-common'), $price);
       $s9 = __('Instant download link.', 'easy-common');
-      $value .= '<b><i> Lite</i></b>';
-      $s10 = sprintf(__('Thank you for using %s. The "Pro" version gives you more options.', 'easy-common'), $value);
-      $s11 = __("Consider buying it.", 'easy-common');
-
-      $plgKey = $this->getPlgKey();
-      $promoClick = addslashes("onclick=\"popupwindow('http://www.thulasidas.com/promo.php?key=$plgKey','Get Pro', 1024, 768);return false;\"");
-      $promoTip = htmlspecialchars("$s3. $s9<br /><a style=\"color:red;font-weight:bold\" href=\"http://www.thulasidas.com/promo.php?key=$plgKey\" target=_blank $promoClick>" . __("Limited Time Offer. Get the Pro version for less than a dollar!", 'easy-common') . "</a>");
-
-      echo "$s10 $filter $s11 <br /><a href='http://buy.thulasidas.com/$slug' title='$s3. $s9' onmouseover=\"Tip('$promoTip', WIDTH, 200, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, 5, 5], TITLE, 'Limited Time Offer')\">$s8</a>";
+      if ($isPro) {
+        $value .= '<b><i> Pro</i></b>';
+        $s6 = sprintf(__("You are enjoying $value with \"Pro\" features.", 'easy-common'), $value);
+        $s7 = __("Please consider buying it, if you haven't already paid for it.", 'easy-common');
+        echo "$s6 $s7 $s8";
+      }
+      else {
+        $value .= '<b><i> Lite</i></b>';
+        $s10 = sprintf(__('Thank you for using %s. The "Pro" version gives you more options.', 'easy-common'), $value);
+        $s11 = __("Consider buying it.", 'easy-common');
+        echo "$s10 $filter $s11 <a href='http://buy.thulasidas.com/$slug' title='$s3. $s9' $onclick>$s8</a>";
+      }
       echo "</div>";
+    }
+
+    function renderPremiumText($slug) {
+      if ($this->killAuthor) {
+        return;
+      }
+      require(dirname(__FILE__) . '/myPlugins.php');
+
+      $plg = $this->myPlugins[$slug];
+
+      echo "<div  id='premium-$slug' style='display:none'>";
+      $value = '<em><strong>' . $plg['value'] . '</strong></em>';
+      $toolTip = $plg['title'];
+      $price = $plg['price'];
+      $onclick = "class='popup'";
+
+      $s2 = __('Lite Version', 'easy-common');
+      $s3 = sprintf(__('Buy the Pro version of %s for $%.2f', 'easy-common'), $plg['value'], $price);
+      $s4 = __('Instant download link.', 'easy-common');
+      $s5 = __('Pro Version', 'easy-common');
+      $plgKey = $this->getPlgKey($slug);
+      $moreInfo = "<a href='http://wordpress.org/extend/plugins/$plgKey/' class='popup' data-height='1024'>$s2</a> and <b><a href='http://buy.thulasidas.com/$slug' title='$s3. $s4' $onclick>$s5</a></b>";
+      $toolTip .= addslashes('<br />' . $moreInfo);
+      $why = addslashes($plg['pro']);
+
+      $s6 = sprintf(__('%s is available in two versions:', 'easy-common'), $value);
+      $s7 = sprintf(__('And it costs only $%.2f!', 'easy-common'), $price);
+      $s8 = __('Get the Pro version now!', 'easy-common');
+
+      echo "{$plg['blurb']} {$plg['desc']}
+<br>
+<br>
+<b style='color:red;font-size:1.1em'>$s8</b>
+<a href='http://buy.thulasidas.com/$slug' title='$s3. $s4' $onclick><img src='{$this->cdn}/ezpaypal.png' alt='ezPayPal' class='alignright'/></a>
+$s6
+<ul><li>
+$moreInfo
+</li>
+<li>$why $s7</li>
+</ul></div>";
     }
 
     function renderAffiliate() {
       if ($this->killAuthor) {
         return;
       }
-      $plgURL = $this->plgURL;
-      $select = rand(0, 2);
-      switch ($select) {
-        case 0:
-          echo "<div style='padding:0px;border:none;text-align:center' id='support' onmouseover=\"TagToTip('maxcdn', WIDTH, 295, TITLE, 'MaxCDN', FIX, [this, 0, 0])\" onmouseout=\"UnTip()\" ><a href='http://tracking.maxcdn.com/c/95082/3964/378' target='_blank'><img src='$plgURL/maxcdn.jpg' border='0' alt='MaxCDN Content Delivery Network' /></a></div>";
-          break;
-        case 1:
-          echo "<div style='padding:0px;border:none;text-align:center' id='support' onmouseover=\"TagToTip('arvixe', WIDTH, 295, TITLE, 'Arvixe', FIX, [this, 0, 0])\" onmouseout=\"UnTip()\" ><a href='http://www.arvixe.com/1933-0-1-357.html' target='_blank'><img border='0' src='$plgURL/arvixe.gif' alt='Advanced Web Hosting for only $4/month'></a></div>";
-          break;
-        case 2:
-        default:
-          echo "<div style='padding:0px;border:none; width:300px;text-align:center' id='support' onmouseover=\"Tip('<b>ezAffiliates</b>: The most affiliate-centric revenue sharing model on the Web. Finally, you can make some serious returns on your web presence.<br /><b>Generous 50% Commission</b>: perhaps the highest rate of revenue sharing on the web. With just a couple of sales of this plugin, you will have recovered your purchase price!<br /><b>$10 Minimum Payout</b> so that you will not be waiting forever before you qualify for payment.<br /><b>Lifetime Tracking</b>: ezAffiliates uses cookie-less tracking technology to attribute every purchase of your lead to your account. Whatever your leads buy from us, whenever they do, will earn you commission. No cookie expiry!<br /><b>High Quality Products</b> such as this plugin, and other premium plugins and PHP packages.<br /><b>Diverse Markets</b>: Bloggers who blog about plugins, PayPal integration, affiliate marketing, MacOS apps and even eBooks will find ezAffiliates attractive and more effective that their current ad campaigns.', WIDTH, 295, TITLE, 'ezAffiliates', FIX, [this, 0, 0])\" onmouseout=\"UnTip()\" ><a href='http://affiliates.thulasidas.com'><img src='$plgURL/invite.gif' alt='ezAffiliates' onclick=\"popupwindow('http://affiliates.thulasidas.com/','50-50 Revenue Share', 1024, 768);return false;\"/></a></div>";
-          break;
-      }
-    }
 
-    function renderSupportText() {
-      if ($this->killAuthor) {
-        return;
-      }
-      $plg = $this->plg;
-      $slug = $this->slug;
-      $long = $plg['long'];
-      $value = '<em><strong>' . $plg['value'] . '</strong></em>';
-      $supportText = "<div style=\"background-color:#cff;padding:5px;border: solid 1px\" id=\"support\"><b>Support $value. <a href=\"http://buy.thulasidas.com/$slug\" title=\"Pro version of this plugin. Instant download link.\" onclick=\"popupwindow('http://buy.thulasidas.com/$slug','Get {$plg['value']}', 1024, 768);return false;\">Go Pro!</a></b>";
-      if ($long) {
-        $longText = "Speed up your blog: ";
+      $roll = rand(0, 4);
+      if ($roll > 3) {
+        $select = rand(0, 4);
+        echo "<div style='padding:0px;border:none;text-align:center' id='support' ><a href='http://www.thulasidas.com/professional-php-services/' target='_blank' onmouseover=\"TagToTip('proservices', WIDTH, 295, TITLE, 'Professional Services', FIX, [this, 0, 240], CLICKCLOSE, true, CLOSEBTN, true)\"><img src='{$this->cdn}/300x250-0$select.jpg' border='0' style='vertical-align:bottom' alt='Professional Services from the Plugin Author' /></a></div>";
       }
       else {
-        $longText = '';
+        extract(self::$premia[$roll]);
+        echo "<div style='padding:0px;border:none;text-align:center' id='premium'><a href='http://www.thulasidas.com/$key' target='_blank' class='popup' data-height='1024' onmouseover=\"TagToTip('premium-$key', WIDTH, 295, TITLE, '$desc', FIX, [this, 0, 240], CLICKCLOSE, true, CLOSEBTN, true)\" ><img src='{$this->cdn}/plg-$key.jpg' style='border: solid 1px;vertical-align:bottom' alt='$name - Another Premium Plugin the this Author' /></a></div>";
       }
-      $supportText .= "<br />$longText<span onmouseover=\"TagToTip('maxcdn', WIDTH, 300, TITLE, 'What is MaxCDN?',STICKY, 1, CLOSEBTN, true, FIX, [this, -150, 2])\"><a href='http://tracking.maxcdn.com/c/95082/3964/378' target='_blank'>Use MaxCDN!</a></span>";
-      if ($long) {
-        $longText = "WordPress Hosting for ";
-      }
-      else {
-        $longText = 'Hosting for ';
-      }
-      $supportText .= "<br />$longText<span onmouseover=\"TagToTip('arvixe', WIDTH, 300, TITLE, 'Arvixe - My favorite provider!',STICKY, 1, CLOSEBTN, true, FIX, [this, -200, 2])\"><a href='http://www.arvixe.com/1933.html' target='_blank'>just $4/month</a></span>. ";
-      if ($long) {
-        $longText = "My books on ";
-      }
-      else {
-        $longText = 'Books: ';
-      }
-      $supportText .= "<br />$longText<span style=\"text-decoration:underline\" onmouseover=\"TagToTip('unreal', WIDTH, 205, TITLE, 'Buy &lt;em&gt;The Unreal Universe&lt;/em&gt;',STICKY, 1, CLOSEBTN, true, FIX, [this, 5, 2])\"><b><a href='http://buy.thulasidas.com/unreal' target='_blank'>Physics &amp; Philosophy</a></b></span> or ";
-      $supportText .= "<span style=\"text-decoration:underline\" onmouseover=\"TagToTip('pqd', WIDTH, 205, TITLE, '&lt;em&gt;Principles of Quant. Devel.&lt;/em&gt;',STICKY, 1, CLOSEBTN, true, FIX, [this, 5, 2])\"><b><a href='http://buy.thulasidas.com/pqd' target='_blank'>Money &amp; Finance</a></b></span>.</div>";
-      echo $supportText;
     }
 
     function renderTipDivs() {
-      $plgURL = $this->plgURL;
       echo <<<ENDDIVS
-<div id="arvixe" style='display:none;'>
-  <a href="http://www.arvixe.com/1933-27-1-310.html" target="_blank"><b>Arvixe</b></a> is my favorite hosting provider. Friendly service, extremely competitive rates, and of course a great affiliate program. My own WordPress blog and a dozen websites are hosted on their VPS. If you are looking for a new hosting provider, do check them out!
-</div>
-
- <span id="maxcdn" style='display:none;'>
-  <a href='http://tracking.maxcdn.com/c/95082/3964/378' target='_blank'><b>MaxCDN</b></a> is a professional content delivery network. Easiest and most effective way to optimize your blog performance. Compatible with caching plugins, 24x7 professional support. Faster than most CDN providers in the continental US. Cheaper and better than most. Check it out now!
+<span id="proservices" style='display:none;'>
+The author of this plugin may be able to help you with your WordPress or plugin customization needs and other PHP related development. <a href='http://www.thulasidas.com/professional-php-services/' target='_blank'>Contact me</a> if you find a plugin that almost, but not quite, does what you are looking for, or if you need any other professional services. If you would like to see my credentials, take a look at <a href='http://www.thulasidas.com/col/Manoj-CV.pdf' target='_blank'>my CV</a>.
 </span>
-
-<span id="dropbox" style='display:none;'>
-  Dropbox! gives you 2GB of network (cloud) storage for free, which I find quite adequate for any normal user. (That sounds like the famous last words by Bill Gates, doesn’t it? “64KB of memory should be enough for anyone!”) And, you can get 250MB extra for every successful referral you make. That brings me to my ulterior motive – please use this link to sign up. When you do, I get 500MB extra. Don’t worry, you get 500MB extra as well. So I can grow my online storage up to 18GB, which should keep me happy for a long time. Thank you!
-</span>
-
-<div id="unreal" style="margin-left:auto;margin-right:auto;width:200px;display:none;">
-<div style="text-align:center;width:200px;padding:1px;background:#aad;margin:2px;">
-<div style="text-align:center;width:192px;height:180px;padding:2px;border:solid 1px #000;background:#ccf;margin:1px;">
-<a style="text-decoration:none;" href="http://buy.thulasidas.com/unreal-universe" title="Find out more about The Unreal Universe and buy it ($1.49 for eBook, $15.95 for paperback). It will change the way you view life and reality!">
-<span style="font-size:14px;font-family:arial;color:#a48;font-variant: small-caps;"><b>The Unreal Universe</b></span><br />
-<small style="font-size:12px;font-family:arial;color:#000;">
-A Book on Physics and Philosophy
-</small>
-</a>
-<hr />
-<table style="border-width:0;padding:2px;width:100%;margin-left:auto;margin-right:auto;border-spacing:0;border-collapse:collapse;">
-<tr><td style="width:65%">
-<a style="text-decoration:none;" href="http://buy.thulasidas.com/unreal-universe" title="Find out more about The Unreal Universe and buy it ($1.49 for eBook or Kindle, $15.95 for paperback). It will change the way you view life and reality!">
-<small style="font-size:10px;font-family:arial;color:#000;">
-Pages: 292<br />
-(282 in eBook)<br />
-Trimsize: 6" x 9" <br />
-Illustrations: 34<br />
-(9 in color in eBook)<br />
-Tables: 8 <br />
-Bibliography: Yes<br />
-Index: Yes<br />
-ISBN: 9789810575946&nbsp;<br />
-<span style="font-color=#ff0000;"><b>Only $1.49!</b></span>
-</small>
-</a>
-</td>
-<td>
-<a style="text-decoration:none;" href="http://buy.thulasidas.com/unreal-universe" title="Find out more about The Unreal Universe and buy it ($1.49 for eBook or Kindle, $15.95 for paperback). It will change the way you view life and reality!">
-<img class="alignright" src="$plgURL/unreal.gif" alt="TheUnrealUniverse" title="Read more about The Unreal Universe" />
-</a>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-
-<div id="pqd" style="margin-left:auto;margin-right:auto;width:200px;display:none;">
-<div style="text-align:center;width:200px;padding:1px;background:#000;margin:2px;">
-<div style="text-align:center;width:190px;height:185px;padding:2px;padding-top:1px;padding-left:4px;border:solid 1px #fff;background:#411;margin:1px;">
-<a style="text-decoration:none;" href="http://buy.thulasidas.com/pqd" title="Buy the companion eBook to Principles of Quantitative Development from the author (only $5.49)">
-<span style="font-size:14px;font-family:arial;color:#fff;font-variant: small-caps;">A Remarkable Book from Wiley-Finance</span>
-</a>
-<hr />
-<table style="border-width:0;padding:2px;width:100%;margin-left:auto;margin-right:auto;border-spacing:0;border-collapse:collapse;">
-<tr><td style="padding:0px">
-<div style="border:solid 1px #faa;height:126px;width:82px;">
-<a style="text-decoration:none;" href="http://buy.thulasidas.com/pqd" title="Buy the companion eBook to Principles of Quantitative Development from the author (only $5.49)">
-<img src="$plgURL/pqd-82x126.gif" alt="PQD" title="Buy the companion eBook to Principles of Quantitative Development from the author (only $5.49)" />
-</a>
-</div>
-</td>
-<td style="padding:3px">
-<a style="text-decoration:none;" href="http://buy.thulasidas.com/pqd" title="Buy the companion eBook to Principles of Quantitative Development from the author (only $5.49)">
-<em style="font-size:14px;font-family:arial;color:#fff;">"An excellent book!"</em><br />
-<small style="font-size:13px;font-family:arial;color:#faa;">&nbsp;&nbsp;&#8212; Paul Wilmott</small>
-<br />
-<small style="font-size:11px;font-family:arial;color:#fff;">
-Want to break into the lucrative world of trading and quantitative finance? You <b>need </b> this book!
-</small>
-</a>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
 ENDDIVS;
+
+      foreach (self::$premia as $p) {
+        $this->renderPremiumText($p['key']);
+      }
     }
 
     static function makeTextWithTooltip($text, $tip, $title = '', $width = '') {
@@ -431,7 +384,6 @@ ENDDIVS;
       if ($this->killAuthor) {
         return;
       }
-      $plgURL = $this->plgURL;
       if (!empty($plg['hide']) && $plg['hide']) {
         return;
       }
@@ -442,14 +394,14 @@ ENDDIVS;
       $desc = $plg['desc'];
       $title = $plg['title'];
       $url = 'http://www.thulasidas.com/plugins/' . $slug;
-      $link = '<b><a href="' . $url . '" target="_blank">' . $value . '</a></b>&nbsp; ';
+      $link = '<b><a href="' . $url . '" target="_blank" class="popup" data-height="1024">' . $value . '</a></b>&nbsp; ';
       $text = $link . $desc;
       $price = $plg['price'];
-      $onclick = "onclick=\"popupwindow('http://buy.thulasidas.com/$slug','Get {$plg['value']}', 1024, 768);return false;\"";
-      $moreInfo = "&nbsp;&nbsp;<a href='http://www.thulasidas.com/plugins/$slug' title='More info about $value at Unreal Blog'>More Info</a> ";
+      $onclick = "class='popup'";
+      $moreInfo = "&nbsp;&nbsp;<a href='http://www.thulasidas.com/plugins/$slug' title='More info about $value at Unreal Blog' class='popup' data-height='1024'>More Info</a> ";
       $liteVersion = "&nbsp;&nbsp; <a href='http://buy.thulasidas.com/lite/$slug.zip' title='Download the Lite version of $value'>Get Lite Version</a> ";
       $proVersion = "&nbsp;&nbsp; <a href='http://buy.thulasidas.com/$slug' title='Buy the Pro version of $value for \$$price' $onclick>Get Pro Version</a><br />";
-      $why = "<a href='http://buy.thulasidas.com/$slug' title='Buy the Pro version of the $slug plugin' $onclick><img src='$plgURL/ezpaypal.png' alt='ezPayPal -- Instant PayPal Shop.' class='alignright' /></a>
+      $why = "<a href='http://buy.thulasidas.com/$slug' title='Buy the Pro version of the $slug plugin' $onclick><img src='{$this->cdn}/ezpaypal.png' alt='ezPayPal -- Instant PayPal Shop.' class='alignright' /></a>
 <br />" . $plg['pro'];
       echo "<li>" . self::makeTextWithTooltip($text, $title, $value, 350) .
       "<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" .
@@ -464,7 +416,6 @@ ENDDIVS;
       if ($this->killAuthor) {
         return;
       }
-      $plgURL = $this->plgURL;
       if (empty($plg['kind']) || $plg['kind'] != 'book') {
         return;
       }
@@ -472,17 +423,17 @@ ENDDIVS;
       $desc = $plg['desc'];
       $title = $plg['title'];
       $url = $plg['url'];
-      $link = '<b><a href="' . $url . '" target="_blank">' . $value . '</a></b>&nbsp; ';
+      $link = "<b><a href='$url' title='More info about $value' target=_blank class='popup' data-height='1024'>$value</a></b>&nbsp; ";
       $text = $link . $desc;
       $price = $plg['price'];
-      $onclick = "onclick=\"popupwindow('http://buy.thulasidas.com/$slug','Get {$plg['value']}', 1024, 768);return false;\"";
-      $moreInfo = "&nbsp;&nbsp; <a href='$url' title='More info about $value' target=_blank>More Info</a> ";
+      $onclick = "class='popup'";
+      $moreInfo = "&nbsp;&nbsp; <a href='$url' title='More info about $value' target=_blank class='popup' data-height='1024'>More Info</a> ";
       $amazon = $plg['amazon'];
       if (!empty($amazon)) {
-        $buyAmazon = "&nbsp;&nbsp; <a href='$amazon' title='Get $value from Amazon.com' target=_blank>Get it at Amazon</a> ";
+        $buyAmazon = "&nbsp;&nbsp; <a href='$amazon' title='Get $value from Amazon.com' target=_blank class='popup' data-height='1024'>Get it at Amazon</a> ";
       }
       $buyNow = "&nbsp;&nbsp; <a href='http://buy.thulasidas.com/$slug' title='Buy and download $value for \$$price' target=_blank $onclick>Buy and Download now!</a><br />";
-      $why = "<a href='http://buy.thulasidas.com/$slug' title='$slug' $onclick><img src='$plgURL/ezpaypal.png' alt='ezPayPal -- Instant PayPal Shop.' class='alignright' /></a>
+      $why = "<a href='http://buy.thulasidas.com/$slug' title='$slug' $onclick><img src='{$this->cdn}/ezpaypal.png' alt='ezPayPal -- Instant PayPal Shop.' class='alignright' /></a>
 <br />" . $title . $desc . " $value costs only \$$price -- direct from the author.";
       echo "<li>" . self::makeTextWithTooltip($text, $title, $value, 350) .
       "<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" .
@@ -494,14 +445,17 @@ ENDDIVS;
     }
 
     function getPlgInfo() {
-      $me = $this->slug;
+      $slug = $this->slug;
       $plugins = get_plugins();
-      $ret = array('Version' => '', 'Info' => '');
+      $ret = array('Title' => '', 'Version' => '', 'Info' => '');
       $break = '';
       foreach ($plugins as $k => $p) {
+        if (!is_plugin_active($k)) {
+          continue;
+        }
         $baseDir = dirname($k);
-        $baseDirSmall = str_replace("-lite", "", $baseDir);
-        if ($baseDir == $me || $baseDirSmall == $me) {
+        $baseDirSmall = str_replace(array("-lite", "-pro"), "", $baseDir);
+        if ($baseDir == $slug || $baseDirSmall == $slug) {
           $version = $p['Version'];
           if (!empty($_SERVER['HTTP_REFERER'])) {
             $referer = $_SERVER['HTTP_REFERER'];
@@ -510,7 +464,8 @@ ENDDIVS;
             $referer = 'Unknown';
           }
           $info = "$break{$p['Title']} V{$p['Version']} (Referer: $referer)";
-          $ret[] = array('Version' => $version, 'Info' => $info);
+          $ret = array('Title' => $p['Title'], 'Version' => $version, 'Info' => $info);
+          return $ret;
         }
       }
       return $ret;
@@ -519,19 +474,18 @@ ENDDIVS;
     function renderSupport() {
       echo '<div style="background-color:#fcf;padding:5px;border: solid 1px;margin:5px;">
 ';
-      $plgURL = $this->plgURL;
       $plg = $this->plg;
       $slug = $this->slug;
       $value = $plg['value'];
       $url = 'http://www.thulasidas.com/plugins/' . $slug . '#faq';
-      $link = '<a href="' . $url . '" target="_blank">' . $value . '</a>';
-      echo "&nbsp;<a href='http://support.thulasidas.com' onclick=\"popupwindow('http://support.thulasidas.com','ezSupport for $value', 1024, 768);return false;\" title='";
+      $link = '<a href="' . $url . '" target="_blank" class="popup" data-height="1024">' . $value . '</a>';
+      echo "&nbsp;<a href='http://support.thulasidas.com' class='popup' title='";
       _e('Ask a support question (in English or French only) via ezSupport @ $0.95', 'easy-common');
-      echo "'><img src='$plgURL/ezsupport.png' class='alignright' alt='ezSupport Portal'/></a>";
+      echo "'><img src='{$this->cdn}/ezsupport.png' class='alignright' alt='ezSupport Portal'/></a>";
       printf(__("If you need help with %s, please read the FAQ section on the %s page. It may answer all your questions.", 'easy-common'), $value, $link);
       echo "<br style='line-height: 20px;'/>";
       _e("Or, if you still need help, you can raise a support ticket.", 'easy-common');
-      echo "&nbsp;<a href='http://support.thulasidas.com' onclick=\"popupwindow('http://support.thulasidas.com','ezSupport', 1024, 768);return false;\" title='";
+      echo "&nbsp;<a href='http://support.thulasidas.com' class='popup' title='";
       _e('Ask a support question (in English or French only) via ezSupport @ $0.95', 'easy-common');
       echo "'>";
       _e("[Request Paid Support]", 'easy-common');
@@ -540,9 +494,9 @@ ENDDIVS;
       _e('Using our ezSupport Ticket System.', 'easy-common');
       echo "]</em></small>";
       echo "<small style='float:right'><em>[";
-      printf(__('You are using %s (V%s)', 'easy-common'), $value, $info[0]['Version']);
+      printf(__('You are using %s (V%s)', 'easy-common'), $value, $info['Version']);
       echo "]</em></small>";
-      $_SESSION['ezSupport'] = $info[0]['Info'];
+      $_SESSION['ezSupport'] = $info['Info'];
       echo "</div>";
     }
 
@@ -550,7 +504,6 @@ ENDDIVS;
       if ($this->killAuthor && !$short) {
         return;
       }
-      $plgURL = $this->plgURL;
       $plg = $this->plg;
       $slug = $this->slug;
       $value = $plg['value'];
@@ -563,8 +516,8 @@ ENDDIVS;
       $s3 = sprintf(__('Buy the Pro version of %s for $%.2f', 'easy-common'), $value, $price);
       $s4 = __('More Info', 'easy-common');
 
-      $onclick = "onclick=\"popupwindow('$buyURL','$s1', 1024, 768);return false;\"";
-      $moreInfo = " &nbsp;  &nbsp; <a href='$infoURL' title='$s2' target=_blank> $s4 </a>&nbsp; <a href='$buyURL' $onclick title='$s3'>Get Pro Version</a>";
+      $onclick = "class='popup'";
+      $moreInfo = " &nbsp;  &nbsp; <a href='$infoURL' title='$s2' target=_blank class='popup' data-height='1024'> $s4 </a>&nbsp; <a href='$buyURL' $onclick title='$s3'>Get Pro Version</a>";
       $toolTip .= addslashes('<br />' . $moreInfo);
       $why = addslashes($plg['pro']);
       echo '<div style="background-color:#cff;padding:5px;border: solid 1px;margin:5px;padding-bottom:15px;">';
@@ -577,7 +530,7 @@ ENDDIVS;
       else {
         $s7 = sprintf(__('You are using the Lite version of %s, which is available in two versions: <b>Lite</b> and <b>Pro</b>.', 'easy-common'), $value);
         echo "<b>Get Pro Version!</b>
-<a href='http://buy.thulasidas.com/$slug' title='$s3'><img src='$plgURL/ezpaypal.png' alt='ezPayPal' class='alignright' $onclick /></a>
+<a href='http://buy.thulasidas.com/$slug' title='$s3' $onclick><img src='{$this->cdn}/ezpaypal.png' alt='ezPayPal' class='alignright' /></a>
 <br />
 $s7
 <ul><li>

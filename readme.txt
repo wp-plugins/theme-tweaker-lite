@@ -4,7 +4,7 @@ Donate link: http://buy.thulasidas.com/theme-tweaker
 Tags: theme, theme colors, theme styles, theme customization, extra css, theme tweaking
 Requires at least: 2.5
 Tested up to: 4.1
-Stable tag: 4.40
+Stable tag: 4.50
 License: GPL2 or later
 
 Theme Tweaker lets you modify the colors in your theme with no CSS/PHP editing.
@@ -23,11 +23,12 @@ Cannot complete the tweaking in one sitting? No problem, *Theme Tweaker* lets yo
 
 = Pro Version =
 
-This release is the freely distributed, Lite version of *Theme Twekaer*. It is fully functional. But the **[Pro Version](http://buy.ads-ez.com/theme-tweaker/ "Pro version of the Theme Tweaer plugin for only $3.95")** gives you more features and benefits. For instance,
+This release is the freely distributed, Lite version of *Theme Twekaer*. It is fully functional. But the **[Pro Version](http://buy.thulasidas.com/theme-tweaker "Pro version of the Theme Tweaer plugin for only $4.95")** gives you more features and benefits. For instance,
 
 1. Ability to generate and download `style.css` files with your modified colors.
 2. Ability to create a child theme so that your changes can be applied even when the underlying theme is updated.
 3. Scanning for *all* the style files in your theme directory to find all possible color definitions.
+4. Ability to tweak colors in both parent and child theme style files.
 
 And more. New features and bug fixes will first appear in the Pro version before being ported to this freely distributed Lite edition.
 
@@ -35,7 +36,7 @@ And more. New features and bug fixes will first appear in the Pro version before
 
 == Upgrade Notice ==
 
-Compatibility with WP4.1.
+Adding ability to scan parent theme folder (pro feature).
 
 == Screenshots ==
 
@@ -46,11 +47,13 @@ Compatibility with WP4.1.
 
 == Installation ==
 
-1. Upload the *Theme Tweaker* plugin (the whole `theme-tweaker-lite` folder) to the '/wp-content/plugins/' directory.
-2. Activate the plugin through the 'Plugins' page in WordPress.
-3. Go to the Appearance -> Theme Tweaker and start tweaking your theme colors!
-4. Or, use the "Settings" link in the Plugins page next to *Theme Tweaker* to reach the tweaking paradise.
+= Searching =
 
+The easiest way to install this plugin is to use the WordPress Admin interface. Go to your admin dashboard, find the "Plugins" menu, and click on "Add New". Search for this plugin and click on "Install Now" and follow the WordPress instructions.
+
+= Uploading =
+
+If you want to download it and manually install, you can again use the WordPress dashboard interface. First download the plugin zip file to your local computer. Then go to your admin dashboard, find the "Plugins" menu, and click on "Add New". After clicking on the "Add New" menu item as above, click on "Upload" (below the title "Install Plugins" near the top). Browse for your downloaded zip file, upload it and activate the plugin.
 == Frequently Asked Questions ==
 
 = Great idea, but doesn't work with my theme. What gives? =
@@ -61,6 +64,7 @@ This scheme worked great when I first developed it. But now, more and more theme
 
 == Change Log ==
 
+* V4.50: Adding ability to scan parent theme folder (pro feature). [Apr 2, 2015]
 * V4.40: Compatibility with WP4.1. [Jan 8, 2014]
 * V4.31: Minor change to the admin interface. [Sep 9, 2011]
 * V4.30: Releasing translations, compatibility with WP4.0. [Sep 8, 2014]
