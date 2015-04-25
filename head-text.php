@@ -17,7 +17,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-echo '<td style="width:25%;max-width:310px">';
+echo '<td style="width:20%;max-width:160px">';
 
 $ez->renderAffiliate();
 $ez->renderTipDivs();

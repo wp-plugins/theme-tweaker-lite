@@ -136,7 +136,7 @@ $myPlugins['theme-tweaker'] = array('value' => 'Theme Tweaker',
 <li>Ability to tweak colors in both parent and child theme style files.</li>');
 
 $myPlugins['easy-quiz'] = array('value' => 'Easy Quiz',
-    'price' => '2.95',
+    'price' => '3.95',
     'share' => false,
     'long' => true,
     'blurb' => '<em><strong>Easy Quiz</strong></em> is a jQuery quiz plugin that ',
@@ -157,23 +157,24 @@ $myPlugins['easy-text-links'] = array('value' => 'Easy Text Links',
     'blurb' => '<em><strong>Easy Text Links</strong></em> is a robust and modern advertising plugin that ',
     'desc' => 'helps you sell and manage text links on your blog.',
     'title' => '<em><strong>Easy Text Links</strong></em> helps you make extra revenue from your blog by selling text links. Text link advertising can be significantly more lucrative than contextual ads. This plugin automates the insertion and expiration of the links, and helps you with quick reminder emails to your advertisers. If you get a lot of advertising enquiries for text links, this is the right plugin for you.',
-    'pro' => '<em><strong>Easy Text Links</strong></em>, in its light form, is already a powerful plugin. The Pro version lets you integrate seamlessly with Easy PayPal and fully automate your link sales, expiration and reminder emails.',
-    'benefits' => '<li>Automated link sales and management.</li>
-<li>Automated email reminders, and subscription based links.</li>
-<li>Choice of several attractive Advertise Here images.</li>
-<li>Dedicated dedicated and multi-insertable widget for displaying your links.</li>');
+    'pro' => '<em><strong>Easy Text Links</strong></em>, in its light form, is already a powerful plugin. The Pro version lets you integrate seamlessly with EZ PayPal and fully automate your link sales, expiration and reminder emails.',
+    'benefits' => '<li>Automated link sales, expiry and management.</li>
+<li>Ability to approve individual links.</li>
+<li>Choice of several attractive Advertise Here images (WIP). </li>
+<li>Dedicated dedicated and multi-insertable widget for displaying your links (WIP).</li>');
 
 $myPlugins['easy-text-links-pro'] = $myPlugins['easy-text-links'];
 
 $myPlugins['easy-latex'] = array('value' => 'Easy WP LaTeX',
-    'price' => '2.95',
+    'price' => '4.95',
     'share' => false,
     'long' => true,
     'blurb' => '<em><strong>Easy WP LaTeX</strong></em> is a premium plugin that ',
     'desc' => 'provides a very easy way to display math and equations in your posts.',
     'title' => '<em><strong>Easy WP LaTeX</strong></em> provides a very easy way to display equations or mathematical formulas (typed in as TeX or LaTeX code) in your posts. It translates LaTeX formulas like this [math](a+b)^2 = a^2 + b^2 + 2ab[/math] into this:<br/>&nbsp;&nbsp;&nbsp;&nbsp;<img src="http://l.wordpress.com/latex.php?latex=(a%2bb)^2%20=%20a^2%20%2b%20b^2%20%2b%202ab&amp;bg=E2E7FF&amp;s=1" style="vertical-align:-70%;" alt="(a+b)^2 = a^2 + b^2 + 2ab" />',
-    'pro' => 'The Lite version of the plugin is fully functional. The Pro version gives you options to cache the equation images so that your pages load faster.',
+    'pro' => 'The Lite version of the plugin is fully functional. The Pro version gives you options to cache the equation images so that your pages load faster. It also gives you the ability to vertically align your equations to the text around them.',
     'benefits' => '<li>Pre-configured cache directory.</li>
+<li>Ability to tweak the vertical alignment of your equations.</li>
 <li>Ability to turn control links on formulas.</li>');
 
 $myPlugins['easy-translator'] = array('value' => 'Easy Translator',

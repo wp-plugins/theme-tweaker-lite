@@ -264,8 +264,7 @@ $moreInfo
       $s4 = __('Pro Version', 'easy-common');
       $s5 = __('Buy the Pro Version', 'easy-common');
 
-      $select = rand(1, 4);
-      echo "<div style='background-color:#ffcccc;padding:5px;border:solid 1px;height:238px;overflow-y:auto;margin:0' onmouseover=\"TagToTip('pro', WIDTH, 300, TITLE, '$s5',STICKY, 1, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, 0, 5])\"><div style='font-size:14px;color:#a48;font-variant: small-caps;text-decoration:underline;text-align:center;'><b><a href='http://buy.thulasidas.com/$slug' $onclick>$s4<img src='{$this->cdn}/pro-$select.jpg' border='0' alt='Pro Version' style='display: block;margin-left:auto;margin-right:auto;max-height:100px' /></a></b></div>";
+      echo "<div style='background-color:#ffcccc;padding:5px;border:solid 1px;height:115px;overflow-y:auto;margin:0' onmouseover=\"TagToTip('pro', WIDTH, 300, TITLE, '$s5',STICKY, 1, CLOSEBTN, true, CLICKCLOSE, true, FIX, [this, -30, 5])\"><div style='font-size:14px;color:#a48;font-variant: small-caps;text-decoration:underline;text-align:center;'><b>$s4</b></div>";
 
       $s8 = sprintf(__('It costs only $%.2f!', 'easy-common'), $price);
       $s9 = __('Instant download link.', 'easy-common');
@@ -273,7 +272,7 @@ $moreInfo
         $value .= '<b><i> Pro</i></b>';
         $s6 = sprintf(__("You are enjoying $value with \"Pro\" features.", 'easy-common'), $value);
         $s7 = __("Please consider buying it, if you haven't already paid for it.", 'easy-common');
-        echo "$s6 $s7 $s8";
+        echo "$s6 $s7 <a href='http://buy.thulasidas.com/$slug' title='$s3. $s9' $onclick>$s8</a>";
       }
       else {
         $value .= '<b><i> Lite</i></b>';
@@ -292,7 +291,7 @@ $moreInfo
 
       $plg = $this->myPlugins[$slug];
 
-      echo "<div  id='premium-$slug' style='display:none'>";
+      echo "<div id='premium-$slug' style='display:none'><a href='http://www.thulasidas.com/$slug' target='_blank' class='popup' data-height='1024'><img src='{$this->cdn}/plg-$slug.jpg' style='border: solid 1px;vertical-align:bottom;max-width:100%' alt='Another Premium Plugin the this Author' /></a><br><br>";
       $value = '<em><strong>' . $plg['value'] . '</strong></em>';
       $toolTip = $plg['title'];
       $price = $plg['price'];
@@ -332,11 +331,11 @@ $moreInfo
       $roll = rand(0, 4);
       if ($roll > 3) {
         $select = rand(0, 4);
-        echo "<div style='padding:0px;border:none;text-align:center' id='support' ><a href='http://www.thulasidas.com/professional-php-services/' target='_blank' onmouseover=\"TagToTip('proservices', WIDTH, 295, TITLE, 'Professional Services', FIX, [this, 0, 240], CLICKCLOSE, true, CLOSEBTN, true)\"><img src='{$this->cdn}/300x250-0$select.jpg' border='0' style='vertical-align:bottom' alt='Professional Services from the Plugin Author' /></a></div>";
+        echo "<div style='padding:0px;border:none;text-align:center' id='support' ><a href='http://www.thulasidas.com/professional-php-services/' target='_blank' onmouseover=\"TagToTip('proservices', WIDTH, 295, TITLE, 'Professional Services', FIX, [this, -65, 110], CLICKCLOSE, true, CLOSEBTN, true)\"><img src='{$this->cdn}/300x250-0$select.jpg' border='0' style='vertical-align:bottom;max-width:150px' alt='Professional Services from the Plugin Author' /></a></div>";
       }
       else {
         extract(self::$premia[$roll]);
-        echo "<div style='padding:0px;border:none;text-align:center' id='premium'><a href='http://www.thulasidas.com/$key' target='_blank' class='popup' data-height='1024' onmouseover=\"TagToTip('premium-$key', WIDTH, 295, TITLE, '$desc', FIX, [this, 0, 240], CLICKCLOSE, true, CLOSEBTN, true)\" ><img src='{$this->cdn}/plg-$key.jpg' style='border: solid 1px;vertical-align:bottom' alt='$name - Another Premium Plugin the this Author' /></a></div>";
+        echo "<div style='padding:0px;border:none;text-align:center' id='premium'><a href='http://www.thulasidas.com/$key' target='_blank' class='popup' data-height='1024' onmouseover=\"TagToTip('premium-$key', WIDTH, 295, TITLE, '$desc', FIX, [this, -65, -30], CLICKCLOSE, true, CLOSEBTN, true)\" ><img src='{$this->cdn}/plg-$key.jpg' style='border: solid 1px;vertical-align:bottom;max-width:150px' alt='$name - Another Premium Plugin the this Author' /></a></div>";
       }
     }
 
