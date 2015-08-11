@@ -45,7 +45,7 @@ $myPlugins['ezpaypal-pro'] = $myPlugins['ezpaypal'];
 $myPlugins['easy-paypal'] = $myPlugins['ezpaypal'];
 
 $myPlugins['ads-ez'] = array('value' => 'Ads EZ',
-    'price' => '14.95',
+    'price' => '20.95',
     'share' => false,
     'long' => false,
     'blurb' => '<em><strong>Ads EZ</strong></em> is a simple, yet powerful, personal ad server. This standalone PHP package ',
@@ -178,7 +178,7 @@ $myPlugins['easy-latex'] = array('value' => 'Easy WP LaTeX',
 <li>Ability to turn control links on formulas.</li>');
 
 $myPlugins['easy-translator'] = array('value' => 'Easy Translator',
-    'price' => '3.95',
+    'price' => '4.95',
     'share' => false,
     'long' => true,
     'blurb' => '<em><strong>Easy Translator</strong></em> ',
